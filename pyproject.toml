@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "a4s_eval"
+version = "0.1.0"
+description = "Evaluation service for A4S"
+authors = ["Thibault Simonetto <thibault.simonetto@uni.lu>", "Maxime Cordy <maxime.cordy@uni.lu>"]
+readme = "README.md"
+
+# Remove the ^ for the dependencies
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.10.0"
+pandas = "^2.2.3"
+pyarrow = "^19.0.0"
+pandas-stubs = "^2.2.3.241126"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.7.4"
+isort = "^5.13.2"
+mypy = "^1.13.0"
+pytest = "^8.3.3"
+pytest-cov = "^6.0.0"
+pylint = "^3.3.1"
+graphviz = "^0.20.3"
+pre-commit = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 79
+
+[tool.pylint]
+disable = [
+    "C0114",  # Missing module docstring
+    "C0115",  # Missing class docstring
+    "C0116"   # Missing function or method docstring
+]
+
+[tool.mypy]
+follow_imports = "silent"
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
