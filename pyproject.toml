@@ -13,6 +13,9 @@ pydantic = "^2.10.0"
 pandas = "^2.2.3"
 pyarrow = "^19.0.0"
 pandas-stubs = "^2.2.3.241126"
+scikit-learn = "^1.6.1"
+scipy = "^1.15.1"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.7.4"
