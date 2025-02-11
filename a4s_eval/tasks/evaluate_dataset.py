@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 import requests
 from a4s_eval.data_model.metric import Metric
