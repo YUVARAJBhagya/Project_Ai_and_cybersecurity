@@ -16,6 +16,9 @@ pandas-stubs = "^2.2.3.241126"
 scikit-learn = "^1.6.1"
 scipy = "^1.15.1"
 requests = "^2.32.3"
+onnx = "^1.17.0"
+skl2onnx = "^1.18.0"
+onnxruntime = "^1.21.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.7.4"
