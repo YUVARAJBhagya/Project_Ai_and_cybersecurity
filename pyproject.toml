@@ -1,39 +1,41 @@
-[tool.poetry]
+[project]
 name = "a4s_eval"
 version = "0.1.0"
 description = "Evaluation service for A4S"
-authors = ["Thibault Simonetto <thibault.simonetto@uni.lu>", "Maxime Cordy <maxime.cordy@uni.lu>"]
+authors = [
+    { name = "Thibault Simonetto", email = "thibault.simonetto@uni.lu" },
+    { name = "Maxime Cordy", email = "maxime.cordy@uni.lu" },
+]
+requires-python = "~=3.12"
 readme = "README.md"
+dependencies = [
+    "pydantic>=2.10.0,<3",
+    "pandas>=2.2.3,<3",
+    "pyarrow>=19.0.0,<20",
+    "pandas-stubs>=2.2.3.241126,<3",
+    "scikit-learn>=1.6.1,<2",
+    "scipy>=1.15.1,<2",
+    "requests>=2.32.3,<3",
+    "onnx>=1.17.0,<2",
+    "skl2onnx>=1.18.0,<2",
+    "onnxruntime>=1.21.0,<2",
+]
 
-# Remove the ^ for the dependencies
-
-[tool.poetry.dependencies]
-python = "^3.12"
-pydantic = "^2.10.0"
-pandas = "^2.2.3"
-pyarrow = "^19.0.0"
-pandas-stubs = "^2.2.3.241126"
-scikit-learn = "^1.6.1"
-scipy = "^1.15.1"
-requests = "^2.32.3"
-onnx = "^1.17.0"
-skl2onnx = "^1.18.0"
-onnxruntime = "^1.21.0"
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.7.4"
-isort = "^5.13.2"
-mypy = "^1.13.0"
-pytest = "^8.3.3"
-pytest-cov = "^6.0.0"
-pylint = "^3.3.1"
-graphviz = "^0.20.3"
-pre-commit = "^4.1.0"
+[dependency-groups]
+dev = [
+    "ruff>=0.7.4,<0.8",
+    "isort>=5.13.2,<6",
+    "mypy>=1.13.0,<2",
+    "pytest>=8.3.3,<9",
+    "pytest-cov>=6.0.0,<7",
+    "pylint>=3.3.1,<4",
+    "graphviz>=0.20.3,<0.21",
+    "pre-commit>=4.1.0,<5",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.isort]
 multi_line_output = 3
