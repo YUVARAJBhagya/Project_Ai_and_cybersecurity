@@ -19,6 +19,7 @@ dependencies = [
     "onnx>=1.17.0,<2",
     "skl2onnx>=1.18.0,<2",
     "onnxruntime>=1.21.0,<2",
+    "fastapi[standard]>=0.115.12",
 ]
 
 [dependency-groups]
