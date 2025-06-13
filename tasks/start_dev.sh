@@ -11,4 +11,5 @@ else
   echo ".env.dev is missing or empty"
 fi
 
+uv run python -m celery_worker &
 uv run uvicorn a4s_eval.main:app --host 0.0.0.0 --port 8001 --reload
