@@ -12,4 +12,4 @@ async def evaluate() -> str:
     # Return the number of eval that we found and will performs.
     poll_and_run_evaluation()
     # Async run the evaluation
-    return "Hi"
+    return {"message": "Evaluation started."}

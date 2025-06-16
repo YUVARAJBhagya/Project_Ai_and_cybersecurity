@@ -8,7 +8,7 @@ from celery import shared_task
 from a4s_eval.evaluations.data_evaluation import data_evaluator_registry
 
 @shared_task
-def dataset_tests(evaluation_pid: uuid.UUID):
+def dataset_evaluation_task(evaluation_pid: uuid.UUID):
 
     evaluation = get_evaluation(evaluation_pid)
 
