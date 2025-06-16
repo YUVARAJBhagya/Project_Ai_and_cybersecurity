@@ -1,6 +1,5 @@
-
 from abc import ABC, abstractmethod
-from typing import Protocol, Callable, List
+from typing import Iterator, Protocol, Callable, List
 
 class Model(ABC):
     pass
@@ -25,6 +24,21 @@ class DataEvaluator(Protocol):
         pass
 
 
+class DataEvaluatorRegistry:
+    def __init__(self):
+        self._functions = {}
+
+    def register(self, name: str, func: DataEvaluator):
+        self._functions[name] = func
+
+    def __iter__(self)-> Iterator[tuple[str, DataEvaluator]]:
+        return iter(self._functions.items())
+
+
+
+data_evaluator_registry = DataEvaluatorRegistry()
+
+
 def data_evaluator() -> Callable[[DataEvaluator], list[Metrics]]:
     """Decorator to register a function as a data evaluator for A4S.
 
@@ -33,15 +47,10 @@ def data_evaluator() -> Callable[[DataEvaluator], list[Metrics]]:
         Callable[[Evaluator], list[Metrics]]: A decorator function that register the evaluation function as data evaluator for A4S
     """
 
-    def func_decorator(func: DataEvaluator) -> list[Metrics]:
-        # APPLY LOGIC HERE
-        pass
+    def func_decorator(func: DataEvaluator) -> None:
+        data_evaluator_registry.register("Test", func)
 
     return func_decorator
 
 
 
-@data_evaluator
-def drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metrics]:
-
-    print("Woooow")

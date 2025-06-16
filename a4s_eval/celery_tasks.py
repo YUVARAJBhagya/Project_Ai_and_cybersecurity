@@ -1,5 +1,5 @@
 from celery import Celery, group
-from a4s_eval.api_client import (
+from a4s_eval.service.api_client import (
     fetch_pending_evaluation,
     store_metric,
     mark_completed,
