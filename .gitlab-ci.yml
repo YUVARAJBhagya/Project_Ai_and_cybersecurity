@@ -1,10 +1,11 @@
-services:
-  - name: docker:dind
-    command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
+
+    # command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
 
 default:
   tags:
     - a4s-runner
+  services:
+    - name: docker:dind
 
 stages:
   - test
