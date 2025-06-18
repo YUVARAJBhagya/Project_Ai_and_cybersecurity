@@ -1,3 +1,10 @@
+"""Environment configuration module for A4S Evaluation.
+
+This module defines environment variables and their default values used throughout
+the A4S evaluation system. These can be overridden by setting actual environment
+variables.
+"""
+
 import os
 
 API_URL = os.getenv("API_URL", "http://a4s-api:8000")

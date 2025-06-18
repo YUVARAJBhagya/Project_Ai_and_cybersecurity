@@ -9,9 +9,7 @@ import os
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from a4s_eval.routers import (
-    evaluation
-)
+from a4s_eval.routers import evaluation
 
 # Initialize the FastAPI application
 app = FastAPI(
