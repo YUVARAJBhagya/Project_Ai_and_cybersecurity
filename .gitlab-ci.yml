@@ -13,8 +13,8 @@ stages:
 test:
   stage: test
   script:
-    - docker build --target=test -t $DOCKER_IMAGE:test .
-    - docker run --rm $DOCKER_IMAGE:test
+    - docker build --target=test -t $CI_REGISTRY_IMAGE:test .
+    - docker run --rm $CI_REGISTRY_IMAGE:test
   allow_failure: false
 
 build:
@@ -23,7 +23,7 @@ build:
   only:
     - main
   script:
-    - docker build --target=prod -t $DOCKER_IMAGE:latest .
+    - docker build --target=prod -t $CI_REGISTRY_IMAGE:latest .
 
 deploy:
   stage: deploy
@@ -32,4 +32,4 @@ deploy:
     - main
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-    - docker push $DOCKER_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
