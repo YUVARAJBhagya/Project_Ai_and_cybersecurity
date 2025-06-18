@@ -14,13 +14,13 @@ stages:
 variables:
   DOCKER_IMAGE: $CI_REGISTRY_IMAGE
   BASE_LAYER: bookworm-slim
+  DOCKER_HOST: tcp://0.0.0.0:2375
 
 test:
   stage: test
   image: docker:cli
   services:
     - name: docker:dind
-      command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
   script:
     - docker build --target=test -t $DOCKER_IMAGE:test .
     - docker run --rm $DOCKER_IMAGE:test
