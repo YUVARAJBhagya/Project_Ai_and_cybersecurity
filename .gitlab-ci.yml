@@ -1,0 +1,35 @@
+default:
+  tags:
+    - a4s-runner
+  image: docker:24.0.5
+  before_script:
+    - docker info
+
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  script:
+    - docker build --target=test -t $CI_REGISTRY_IMAGE:test .
+    - docker run --rm $CI_REGISTRY_IMAGE:test
+  allow_failure: false
+
+build:
+  stage: build
+  image: docker:cli
+  only:
+    - main
+  script:
+    - docker build --target=prod -t $CI_REGISTRY_IMAGE:latest .
+
+deploy:
+  stage: deploy
+  image: docker:cli
+  only:
+    - main
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE:latest
