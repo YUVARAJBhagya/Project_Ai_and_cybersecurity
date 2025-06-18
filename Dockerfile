@@ -6,47 +6,34 @@
 FROM python:3.12-slim-bookworm AS base
 
 # Install uv package manager
-COPY --from=ghcr.io/astral-sh/uv:0.4.9 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.7.13 /uv /bin/uv
 
 
 # ----- Builder
-# Builder stage for dependencies and compilation
 FROM base AS builder
-
-# Enable bytecode compilation and copy linking
+COPY --from=ghcr.io/astral-sh/uv:0.4.9 /uv /bin/uv
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
-
 WORKDIR /app
-
-# Copy dependency files
 COPY uv.lock pyproject.toml /app/
-
-# Install production dependencies with caching
 RUN --mount=type=cache,target=/root/.cache/uv \
   uv sync --frozen --no-install-project --no-dev
-
-# Copy application code
 COPY . /app
-
-# Install project in production mode
 RUN --mount=type=cache,target=/root/.cache/uv \
   uv sync --frozen --no-dev
 
 
 # ----- Test
-# Test stage for running tests and linters
-FROM builder AS test
-
-# Install test and development dependencies
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --dev
-
+FROM base AS test
+COPY --from=builder /app /app
 ENV PATH="/app/.venv/bin:$PATH"
+WORKDIR /app
 
-# Run tests (example with pytest)
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv sync --frozen
 CMD ["pytest", "--maxfail=1", "--disable-warnings"]
 
 
+# ----- Production
 # Final stage for runtime
 FROM builder AS prod
 
