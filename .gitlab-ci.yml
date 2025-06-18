@@ -1,0 +1,29 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+
+test:
+  stage: test
+  script:
+    - docker build --target=test -t $DOCKER_IMAGE:test .
+    - docker run --rm $DOCKER_IMAGE:test
+  allow_failure: false
+
+build:
+  stage: build
+  only:
+    - main
+  script:
+    - docker build --target=prod -t $DOCKER_IMAGE:latest .
+
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - docker push $DOCKER_IMAGE:latest
