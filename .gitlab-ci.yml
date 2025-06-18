@@ -13,6 +13,7 @@ stages:
 
 variables:
   DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  BASE_LAYER: bookworm-slim
 
 test:
   stage: test
