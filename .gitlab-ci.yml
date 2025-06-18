@@ -15,6 +15,7 @@ variables:
 
 test:
   stage: test
+  image: docker:cli
   script:
     - docker build --target=test -t $DOCKER_IMAGE:test .
     - docker run --rm $DOCKER_IMAGE:test
@@ -22,6 +23,7 @@ test:
 
 build:
   stage: build
+  image: docker:cli
   only:
     - main
   script:
@@ -29,6 +31,7 @@ build:
 
 deploy:
   stage: deploy
+  image: docker:cli
   only:
     - main
   script:
