@@ -1,6 +1,10 @@
 services:
   - name: docker:dind
 
+default:
+  tags:
+    - a4s-runner
+
 stages:
   - test
   - build
