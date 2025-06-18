@@ -47,9 +47,9 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
-# Set up entrypoint script
-RUN chmod +x entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
+# # Set up entrypoint script
+# RUN chmod +x entrypoint.sh
+# ENTRYPOINT ["./entrypoint.sh"]
 
 # Expose API port
 EXPOSE 8000
