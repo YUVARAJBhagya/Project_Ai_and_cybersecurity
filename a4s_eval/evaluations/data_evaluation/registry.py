@@ -1,18 +1,14 @@
-from abc import ABC, abstractmethod
-from typing import Iterator, Protocol, Callable, List
+from abc import ABC
+from typing import Callable, Iterator, List, Protocol
 
-class Model(ABC):
-    pass
+from a4s_eval.data_model.evaluation import Dataset
 
-class Dataset(ABC):
-    pass
 
 class Metrics(ABC):
     pass
 
 
 class DataEvaluator(Protocol):
-
     def __call__(self, reference: Dataset, evaluated: Dataset) -> List[Metrics]:
         """Run a specific data evaluation.
 
@@ -31,9 +27,8 @@ class DataEvaluatorRegistry:
     def register(self, name: str, func: DataEvaluator):
         self._functions[name] = func
 
-    def __iter__(self)-> Iterator[tuple[str, DataEvaluator]]:
+    def __iter__(self) -> Iterator[tuple[str, DataEvaluator]]:
         return iter(self._functions.items())
-
 
 
 data_evaluator_registry = DataEvaluatorRegistry()
@@ -49,8 +44,6 @@ def data_evaluator() -> Callable[[DataEvaluator], list[Metrics]]:
 
     def func_decorator(func: DataEvaluator) -> None:
         data_evaluator_registry.register("Test", func)
+        return func
 
     return func_decorator
-
-
-

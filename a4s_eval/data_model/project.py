@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from a4s_eval.data_model.dataset import Dataset
+from a4s_eval.data_model. import Dataset
 
 
 class Project(BaseModel):
