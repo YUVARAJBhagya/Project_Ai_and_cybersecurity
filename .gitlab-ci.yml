@@ -4,8 +4,7 @@
 default:
   tags:
     - a4s-runner
-  services:
-    - name: docker:dind
+
 
 stages:
   - test
@@ -18,6 +17,8 @@ variables:
 test:
   stage: test
   image: docker:cli
+  services:
+    - name: docker:dind
   script:
     - docker build --target=test -t $DOCKER_IMAGE:test .
     - docker run --rm $DOCKER_IMAGE:test
