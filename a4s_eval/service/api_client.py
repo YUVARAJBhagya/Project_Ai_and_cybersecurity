@@ -20,11 +20,6 @@ class MetricDTO(BaseModel):
     value: float | str
 
 
-def store_metric(evaluation_id, name, value):
-    payload = MetricDTO(name=name, value=value).model_dump()
-    # return requests.post(f"{API_URL_PREFIX}/evaluations/{evaluation_id}/metrics", json=payload)
-
-
 def fetch_pending_evaluation():
     resp = requests.get(f"{API_URL_PREFIX}/evaluations?status=pending")
     if resp.status_code != 200:
@@ -36,7 +31,7 @@ def fetch_pending_evaluation():
     return None
 
 
-def claim_evaluation(evaluation_pid):
+def claim_evaluation(evaluation_pid: uuid.UUID) -> bool:
     payload = EvaluationStatusUpdateDTO(status="running").model_dump()
     resp = requests.patch(
         f"{API_URL_PREFIX}/evaluations/{evaluation_pid}", json=payload
@@ -44,14 +39,14 @@ def claim_evaluation(evaluation_pid):
     return resp.status_code == 200
 
 
-def mark_completed(evaluation_pid):
+def mark_completed(evaluation_pid: uuid.UUID) -> requests.Response:
     payload = EvaluationStatusUpdateDTO(status="completed").model_dump()
     return requests.patch(
         f"{API_URL_PREFIX}/evaluations/{evaluation_pid}", json=payload
     )
 
 
-def mark_failed(evaluation_pid):
+def mark_failed(evaluation_pid: uuid.UUID) -> None:
     payload = EvaluationStatusUpdateDTO(status="failed").model_dump()
     return requests.patch(
         f"{API_URL_PREFIX}/evaluations/{evaluation_pid}", json=payload

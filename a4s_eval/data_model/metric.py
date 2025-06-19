@@ -24,5 +24,5 @@ class Metric(BaseModel):
     dataset_id: Optional[int] = None  # ID of the associated dataset, if applicable
 
     @field_serializer("time")
-    def serialize_dt(self, dt: datetime, _info):
+    def serialize_dt(self, dt: datetime, _info) -> str:
         return dt.isoformat()

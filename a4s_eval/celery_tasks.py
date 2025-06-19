@@ -1,18 +1,19 @@
+import uuid
+
 from celery import Celery, group
+
 from a4s_eval.service.api_client import (
     fetch_pending_evaluation,
     mark_completed,
-    mark_failed
+    mark_failed,
 )
-
 from a4s_eval.tasks.evaluation_tasks import dataset_evaluation_task
-
 from a4s_eval.utils import env
 
 celery_app = Celery(__name__, broker=env.CELERY_BROKER_URL, backend=env.REDIS_BACKEND_URL)
 
 @celery_app.task
-def poll_and_run_evaluation():
+def poll_and_run_evaluation() -> None:
     eval_id = fetch_pending_evaluation()
     if not eval_id:
         eval_id = 1
@@ -23,7 +24,7 @@ def poll_and_run_evaluation():
     (tasks | finalize_evaluation.s(eval_id)).apply_async()
 
 @celery_app.task
-def finalize_evaluation(results, evaluation_id):
+def finalize_evaluation(evaluation_id: uuid.UUID) -> None:
     try:
         mark_completed(evaluation_id)
     except Exception:
