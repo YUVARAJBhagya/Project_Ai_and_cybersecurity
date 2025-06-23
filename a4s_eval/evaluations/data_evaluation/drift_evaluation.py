@@ -35,7 +35,18 @@ def categorical_drift_test(x_ref: pd.Series, x_new: pd.Series) -> float:
     Returns:
         float: Jensen-Shannon distance between the distributions
     """
-    return jensenshannon(x_ref, x_new)
+    # Get all unique values from both series
+    all_categories = pd.Index(x_ref.unique()).union(pd.Index(x_new.unique()))
+    
+    # Compute normalized value counts for both distributions
+    ref_counts = x_ref.value_counts(normalize=True)
+    new_counts = x_new.value_counts(normalize=True)
+    
+    # Reindex to ensure both have the same categories (fill missing with 0)
+    ref_dist = ref_counts.reindex(all_categories, fill_value=0.0)
+    new_dist = new_counts.reindex(all_categories, fill_value=0.0)
+    
+    return jensenshannon(ref_dist.values, new_dist.values)
 
 @data_evaluator(name="Data drift")
 def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]:
@@ -63,7 +74,7 @@ def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]
             out.append(
                 Metric(
                     name="jensenshannon",
-                    score=numerical_drift_test(
+                    score=categorical_drift_test(
                         reference.data[feature.name],
                         evaluated.data[feature.name],
                     ),
