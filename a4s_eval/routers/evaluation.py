@@ -10,6 +10,7 @@ router = APIRouter(tags=["evaluations"])
 async def evaluate() -> str:
 
     # Return the number of eval that we found and will performs.
-    poll_and_run_evaluation()
+    # poll_and_run_evaluation()
+    poll_and_run_evaluation.delay()
     # Async run the evaluation
-    return {"message": "Evaluation started."}
+    return "Evaluation started."

@@ -37,11 +37,12 @@ def categorical_drift_test(x_ref: pd.Series, x_new: pd.Series) -> float:
     """
     return jensenshannon(x_ref, x_new)
 
+
 @data_evaluator(name="Data drift")
 def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]:
     """Calculate drift for a specific feature based on its type."""
 
-    date = evaluated.data[reference.shape.date.name].max()
+    date = pd.to_datetime(evaluated.data[reference.shape.date.name]).max()
 
     out = []
 
@@ -56,6 +57,7 @@ def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]
                         evaluated.data[feature.name],
                     ),
                     time=date.to_pydatetime(),
+                    feature_pid=feature.pid,
                 )
             )
 
@@ -68,6 +70,7 @@ def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]
                         evaluated.data[feature.name],
                     ),
                     time=date.to_pydatetime(),
+                    feature_pid=feature.pid,
                 )
             )
 

@@ -1,7 +1,7 @@
 """Data model for representing evaluation metrics and their associated metadata."""
 
+import uuid
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, field_serializer
 
@@ -18,11 +18,12 @@ class Metric(BaseModel):
     score: float  # Numerical value of the metric
     time: datetime  # Timestamp when the metric was computed
 
-    # Optional associations
-    model_id: Optional[int] = None  # ID of the associated model, if applicable
-    feature_id: Optional[int] = None  # ID of the associated feature, if applicable
-    dataset_id: Optional[int] = None  # ID of the associated dataset, if applicable
+    feature_pid: uuid.UUID | None
 
     @field_serializer("time")
     def serialize_dt(self, dt: datetime, _info) -> str:
         return dt.isoformat()
+
+    @field_serializer("feature_pid")
+    def serialize_pid(self, pid: uuid.UUID, _info) -> str:
+        return str(pid)

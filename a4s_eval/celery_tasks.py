@@ -1,27 +1,30 @@
 import uuid
 
-from celery import Celery, group
+from celery import group
 
+from a4s_eval.celery_app import celery_app
 from a4s_eval.service.api_client import (
-    fetch_pending_evaluation,
+    fetch_pending_evaluations,
     mark_completed,
     mark_failed,
 )
 from a4s_eval.tasks.evaluation_tasks import dataset_evaluation_task
-from a4s_eval.utils import env
 
-celery_app = Celery(__name__, broker=env.CELERY_BROKER_URL, backend=env.REDIS_BACKEND_URL)
 
 @celery_app.task
 def poll_and_run_evaluation() -> None:
-    eval_id = fetch_pending_evaluation()
-    if not eval_id:
-        eval_id = 1
+    eval_ids = fetch_pending_evaluations()
+    if not eval_ids:
+        eval_ids = []  # Default evaluation ID if none are pending
 
-    tasks = group([
-        dataset_evaluation_task.s(eval_id),
-    ])
-    (tasks | finalize_evaluation.s(eval_id)).apply_async()
+    # Create a group for each evaluation ID
+    print(eval_ids)
+    groups = [group(dataset_evaluation_task.s(eval_id)) for eval_id in eval_ids]
+
+    # Apply each group in parallel
+    for eval_id, g in zip(eval_ids, groups):
+        (g | finalize_evaluation.si(eval_id)).apply_async()
+
 
 @celery_app.task
 def finalize_evaluation(evaluation_id: uuid.UUID) -> None:

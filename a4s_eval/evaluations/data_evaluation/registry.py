@@ -34,7 +34,15 @@ data_evaluator_registry = DataEvaluatorRegistry()
 def data_evaluator(name: str) -> Callable[[DataEvaluator], list[Metric]]:
     """Decorator to register a function as a data evaluator for A4S.
 
-    Args:
+    Args:INSERT INTO model (id, pid, name, data, project_id, dataset_id)
+    VALUES (
+        id:integer,
+        'pid:uuid',
+        'name:character varying',
+        'data:character varying',
+        project_id:integer,
+        dataset_id:integer
+      );
         name: The name to register the evaluator under.
 
     Returns:
