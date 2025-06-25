@@ -18,7 +18,7 @@ class Metric(BaseModel):
     score: float  # Numerical value of the metric
     time: datetime  # Timestamp when the metric was computed
 
-    feature_pid: uuid.UUID | None
+    feature_pid: uuid.UUID | None = None
 
     @field_serializer("time")
     def serialize_dt(self, dt: datetime, _info) -> str:

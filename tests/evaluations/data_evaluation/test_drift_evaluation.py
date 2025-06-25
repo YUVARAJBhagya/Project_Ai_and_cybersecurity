@@ -18,7 +18,7 @@ def data_shape() -> DataShape:
     )
 
     for record in metadata:
-        record["uuid"] = uuid.uuid4()
+        record["pid"] = uuid.uuid4()
 
     data_shape = {
         "features": [
