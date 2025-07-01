@@ -17,13 +17,14 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
     metrics: list[Metric] = []
 
     x_test = evaluation.dataset.data
-    for _, x_curr in DateIterator(
+    for i, (_, x_curr) in enumerate(DateIterator(
         date_round="1 D",
         window=evaluation.project.window_size,
         freq=evaluation.project.frequency,
         df=evaluation.dataset.data,
         date_feature=evaluation.model.dataset.shape.date.name,
-    ):
+    )):
+        print(f"Iteration {i}")
         evaluation.dataset.data = x_curr
         for name, evaluator in data_evaluator_registry:
             metrics.extend(evaluator(evaluation.dataset, evaluation.model.dataset))
