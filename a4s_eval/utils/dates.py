@@ -26,6 +26,13 @@ def get_date_batches(
     Returns:
         list[tuple[pd.Timestamp, pd.Timestamp]]: List of (start, end) timestamp pairs
     """
+    # Special case: if start_date equals end_date, create a single batch
+    if start_date == end_date:
+        # Create a batch that includes all data from that single date
+        batch_start = start_date
+        batch_end = start_date + pd.Timedelta(days=1)  # Next day to include all data from start_date
+        return [(batch_start, batch_end)]
+    
     # Round dates if specified
     start_date_round = start_date
     end_date_round = end_date
