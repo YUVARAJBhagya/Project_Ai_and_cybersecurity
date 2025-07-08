@@ -3,7 +3,7 @@ import uuid
 from a4s_eval.celery_app import celery_app
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.evaluations.data_evaluation.registry import data_evaluator_registry
-from a4s_eval.service.api_client import get_dataset_data, get_evaluation, post_metrics, mark_completed, mark_failed
+from a4s_eval.service.api_client import get_dataset_data, get_evaluation, post_metrics, mark_failed
 from a4s_eval.utils.dates import DateIterator
 from a4s_eval.utils.env import API_URL_PREFIX
 
@@ -100,13 +100,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
             print(f"Error posting metrics: {e}")
             raise
             
-        print(f"Marking evaluation as completed...")
-        try:
-            mark_completed(evaluation_pid)
-            print(f"Evaluation marked as completed successfully")
-        except Exception as e:
-            print(f"Error marking evaluation as completed: {e}")
-            raise
+        print(f"Evaluation task completed successfully")
             
     except Exception as e:
         print(f"Error in evaluation task: {e}")
