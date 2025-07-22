@@ -57,6 +57,7 @@ class Dataset(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+
 class Model(BaseModel):
     pid: uuid.UUID
     model: pd.DataFrame | None = None
@@ -71,10 +72,9 @@ class Project(BaseModel):
     frequency: str
     window_size: str
 
+
 class Evaluation(BaseModel):
     pid: uuid.UUID
     dataset: Dataset
     model: Model
     project: Project
-
-

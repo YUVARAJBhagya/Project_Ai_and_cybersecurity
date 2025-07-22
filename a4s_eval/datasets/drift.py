@@ -17,7 +17,7 @@ from a4s_eval.utils.dates import DateIterator
 # Import the actual drift calculation functions from the evaluation module
 from a4s_eval.evaluations.data_evaluation.drift_evaluation import (
     numerical_drift_test,
-    feature_drift_test
+    feature_drift_test,
 )
 
 
@@ -25,12 +25,12 @@ def numerical_drift_metric(
     x_ref: pd.Series, x_new: pd.Series, time: datetime
 ) -> Metric:
     """Create a metric object for numerical drift using Wasserstein distance.
-    
+
     Args:
         x_ref: Reference distribution
         x_new: New distribution to compare
         time: Timestamp for the metric
-    
+
     Returns:
         Metric: Drift metric object with computed score
     """
@@ -50,17 +50,17 @@ def data_drift_test(
     date_feature: Feature,
 ) -> list[Metric]:
     """Calculate drift metrics for all features in a dataset over time windows.
-    
+
     This function maintains backward compatibility while using the improved
     drift calculation functions from the evaluation module.
-    
+
     Args:
         project: Project configuration containing window size and frequency
         x_ref: Reference dataset
         x_new: New dataset to compare
         features: List of features to analyze
         date_feature: Feature containing temporal information
-    
+
     Returns:
         list[Metric]: List of drift metrics for each feature and time window
     """
@@ -82,5 +82,5 @@ def data_drift_test(
             )
             metric.feature_pid = feature.pid
             metrics.append(metric)
-    
+
     return metrics

@@ -16,7 +16,7 @@ def poll_and_run_evaluation() -> None:
     print("Polling for pending evaluations...")
     eval_ids = fetch_pending_evaluations()
     print(f"Found {len(eval_ids)} pending evaluations: {eval_ids}")
-    
+
     if not eval_ids:
         print("No pending evaluations found")
         return
@@ -37,7 +37,9 @@ def finalize_evaluation(evaluation_id: uuid.UUID) -> None:
     print(f"Finalizing evaluation {evaluation_id}")
     try:
         response = mark_completed(evaluation_id)
-        print(f"Evaluation {evaluation_id} marked as completed, status: {response.status_code}")
+        print(
+            f"Evaluation {evaluation_id} marked as completed, status: {response.status_code}"
+        )
     except Exception as e:
         print(f"Failed to mark evaluation {evaluation_id} as completed: {e}")
         mark_failed(evaluation_id)

@@ -56,16 +56,16 @@ def feature_drift_test(
     date: pd.Timestamp,
 ) -> Metric:
     """Calculate drift for a specific feature based on its type.
-    
+
     Args:
         x_ref: Reference distribution for the feature
         x_new: New distribution to compare
         feature_type: Type of the feature (numerical or categorical)
         date: Timestamp for the metric
-    
+
     Returns:
         Metric: Drift metric object with computed score
-    
+
     Raises:
         ValueError: If feature type is not supported
     """
@@ -79,7 +79,9 @@ def feature_drift_test(
     elif feature_type == FeatureType.CATEGORICAL:
         return Metric(
             name="jensenshannon",
-            score=categorical_drift_test(x_ref, x_new),  # Fixed: was using numerical_drift_test
+            score=categorical_drift_test(
+                x_ref, x_new
+            ),  # Fixed: was using numerical_drift_test
             time=date.to_pydatetime(),
         )
     else:
@@ -89,33 +91,31 @@ def feature_drift_test(
 @data_evaluator(name="Data drift")
 def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]:
     """Calculate drift for all features between reference and evaluated datasets.
-    
+
     This evaluator compares the reference dataset against the evaluated dataset
     for the current time window. The time windowing is handled at a higher level
     by the evaluation_tasks.py DateIterator.
-    
+
     Args:
-        reference: The reference dataset (model dataset) 
+        reference: The reference dataset (model dataset)
         evaluated: The evaluated dataset (current time window)
-    
+
     Returns:
         list[Metric]: List of drift metrics for each feature
     """
-    
+
     # Get the current date from the evaluated dataset
     date = pd.to_datetime(evaluated.data[reference.shape.date.name]).max()
-    
+
     metrics = []
-    
+
     for feature in reference.shape.features:
         feature_type = feature.feature_type
         x_ref_feature = reference.data[feature.name]
         x_new_feature = evaluated.data[feature.name]
 
-        metric = feature_drift_test(
-            x_ref_feature, x_new_feature, feature_type, date
-        )
+        metric = feature_drift_test(x_ref_feature, x_new_feature, feature_type, date)
         metric.feature_pid = feature.pid
         metrics.append(metric)
-    
+
     return metrics

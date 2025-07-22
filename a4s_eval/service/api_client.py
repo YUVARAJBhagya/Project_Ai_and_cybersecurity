@@ -90,11 +90,13 @@ def get_evaluation(
 
 
 def post_metrics(evaluation_pid: uuid.UUID, metrics: list[Metric]) -> requests.Response:
-    print(f"post_metrics called with {len(metrics)} metrics for evaluation {evaluation_pid}")
-    
+    print(
+        f"post_metrics called with {len(metrics)} metrics for evaluation {evaluation_pid}"
+    )
+
     payload = [metric.model_dump() for metric in metrics]
     print(f"Payload prepared, size: {len(payload)}")
-    
+
     if len(payload) > 0:
         print(f"Sample payload item: {payload[0]}")
 
@@ -102,7 +104,7 @@ def post_metrics(evaluation_pid: uuid.UUID, metrics: list[Metric]) -> requests.R
     print(f"Posting to URL: {url}")
 
     response = requests.post(url, json=payload)
-    
+
     print(f"Response status: {response.status_code}")
     print(f"Response headers: {dict(response.headers)}")
     print(f"Response content: {response.text}")
