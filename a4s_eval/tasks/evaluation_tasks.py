@@ -7,8 +7,6 @@ from a4s_eval.service.api_client import get_dataset_data, get_evaluation, post_m
 from a4s_eval.utils.dates import DateIterator
 from a4s_eval.utils.env import API_URL_PREFIX
 
-# Import evaluation modules to ensure decorators are executed and evaluators are registered
-from a4s_eval.evaluations.data_evaluation import drift_evaluation
 
 
 @celery_app.task
@@ -34,15 +32,15 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
 
         evaluation.dataset.data = get_dataset_data(evaluation.dataset.pid)
         evaluation.model.dataset.data = get_dataset_data(evaluation.model.dataset.pid)
-        print(f"Data loaded for both datasets")
+        print("Data loaded for both datasets")
 
         metrics: list[Metric] = []
 
         x_test = evaluation.dataset.data
-        print(f"Starting time iteration for evaluation...")
+        print("Starting time iteration for evaluation...")
         
         # Debug DateIterator parameters
-        print(f"DateIterator parameters:")
+        print("DateIterator parameters:")
         print(f"   - window_size: {evaluation.project.window_size}")
         print(f"   - frequency: {evaluation.project.frequency}")
         print(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
@@ -60,7 +58,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
                 df=evaluation.dataset.data,
                 date_feature=evaluation.model.dataset.shape.date.name,
             )
-            print(f"DateIterator created successfully")
+            print("DateIterator created successfully")
             
             for i, (date_val, x_curr) in enumerate(date_iterator):
                 iteration_count += 1
@@ -100,11 +98,11 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
             print(f"Error posting metrics: {e}")
             raise
             
-        print(f"Evaluation task completed successfully")
+        print("Evaluation task completed successfully")
             
     except Exception as e:
         print(f"Error in evaluation task: {e}")
-        print(f"Marking evaluation as failed...")
+        print("Marking evaluation as failed...")
         try:
             mark_failed(evaluation_pid)
         except Exception as mark_error:

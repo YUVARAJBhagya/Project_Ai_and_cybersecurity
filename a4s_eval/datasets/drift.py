@@ -9,7 +9,7 @@ This module now delegates to the main drift evaluation functions to avoid code d
 from datetime import datetime
 import pandas as pd
 
-from a4s_eval.data_model.dataset import Feature, FeatureType
+from a4s_eval.data_model.dataset import Feature
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.data_model.project import Project
 from a4s_eval.utils.dates import DateIterator
@@ -17,7 +17,6 @@ from a4s_eval.utils.dates import DateIterator
 # Import the actual drift calculation functions from the evaluation module
 from a4s_eval.evaluations.data_evaluation.drift_evaluation import (
     numerical_drift_test,
-    categorical_drift_test,
     feature_drift_test
 )
 

@@ -3,7 +3,7 @@ import uuid
 from typing import Any
 
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, field_serializer
+from pydantic import BaseModel, ConfigDict
 
 
 class FeatureType(str, enum.Enum):

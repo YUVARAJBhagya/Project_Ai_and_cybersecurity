@@ -6,7 +6,6 @@ They are designed to run in CI environments reliably.
 
 import uuid
 from datetime import datetime
-from unittest.mock import Mock, patch
 
 import pandas as pd
 import pytest

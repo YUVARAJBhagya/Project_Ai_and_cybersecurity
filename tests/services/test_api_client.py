@@ -1,4 +1,3 @@
-import io
 import uuid
 from unittest.mock import MagicMock, Mock, patch
 

@@ -1,12 +1,9 @@
-import datetime
-import json
 import uuid
 from io import BytesIO
-from typing import Annotated, Any, Callable
+from typing import Any
 
 import pandas as pd
 import requests
-from fastapi import Depends
 from pydantic import BaseModel
 
 from a4s_eval.data_model.evaluation import Evaluation
@@ -40,7 +37,6 @@ def fetch_pending_evaluations() -> list[uuid.UUID]:
 
 def claim_evaluation(evaluation_pid: uuid.UUID) -> bool:
     print(f"Claiming evaluation {evaluation_pid}")
-    payload = EvaluationStatusUpdateDTO(status="processing").model_dump()
     resp = requests.put(
         f"{API_URL_PREFIX}/evaluations/{evaluation_pid}?status=processing"
     )
@@ -54,7 +50,6 @@ def claim_evaluation(evaluation_pid: uuid.UUID) -> bool:
 
 
 def mark_completed(evaluation_pid: uuid.UUID) -> requests.Response:
-    payload = EvaluationStatusUpdateDTO(status="done").model_dump()
     return requests.put(f"{API_URL_PREFIX}/evaluations/{evaluation_pid}?status=done")
 
 
