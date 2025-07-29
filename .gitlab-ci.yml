@@ -2,18 +2,30 @@ default:
   tags:
     - a4s-runner
 
+variables:
+  UV_VERSION: "0.5"
+  PYTHON_VERSION: "3.12"
+  BASE_LAYER: bookworm-slim
+  UV_LINK_MODE: copy
+  UV_CACHE_DIR: .uv-cache
+
 stages:
   - test
   - build
 
 test:
   stage: test
-  image: docker:24.0.5
-  before_script:
-    - docker info
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
+  cache:
+    - key:
+        files:
+          - uv.lock
+      paths:
+        - $UV_CACHE_DIR
   script:
-    - docker build --target=test -t $CI_REGISTRY_IMAGE:test .
-    - docker run --rm $CI_REGISTRY_IMAGE:test
+    - uv sync
+    - uv run pytest
+    - uv cache prune --ci
   allow_failure: false
 
 build:
