@@ -15,7 +15,7 @@ stages:
   - build
 
 checks:
-  stage: check
+  stage: checks
   cache:
     - key:
         files:
