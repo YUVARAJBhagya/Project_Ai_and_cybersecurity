@@ -10,8 +10,23 @@ variables:
   UV_CACHE_DIR: .uv-cache
 
 stages:
+  - checks
   - test
   - build
+
+checks:
+  stage: check
+  cache:
+    - key:
+        files:
+          - uv.lock
+      paths:
+        - $UV_CACHE_DIR
+  script:
+    - uv sync
+    - uv run ruff check .
+    - uv run ruff format --check .
+    - uv cache prune --ci
 
 test:
   stage: test
