@@ -8,6 +8,7 @@ import onnxruntime as ort
 from a4s_eval.data_model.evaluation import Dataset, DataShape, Model
 from a4s_eval.evaluations.model_evaluation.perf_evaluation import (
     empty_model_evaluator,
+    model_perf_evaluator
 )
 
 
@@ -53,15 +54,37 @@ def ref_dataset(data_shape: DataShape) -> Dataset:
 
 @pytest.fixture
 def ref_model(ref_dataset: Dataset) -> Model:
-    model = ort.InferenceSession('./tests/data/lcld_v2_random_forest.onnx')
     return Model(
         pid=uuid.uuid4(),
-        model=model,
+        model=None,
         dataset=ref_dataset,
     )
 
 
-def test_smoke(ref_model: Model, test_dataset: Dataset):
-    metrics = empty_model_evaluator(ref_model, test_dataset)
+@pytest.fixture
+def y_pred_proba(ref_model: Model, test_dataset: Dataset) -> np.ndarray:
+    session = ort.InferenceSession('./tests/data/lcld_v2_random_forest.onnx')
+    df = test_dataset.data[[f.name for f in test_dataset.shape.features]]
+    x_test = df.astype(np.double).to_numpy()
+
+    input_name = session.get_inputs()[0].name
+    label_name = session.get_outputs()[1].name
+    pred_onx = session.run([label_name], {input_name: x_test})[0]
+    y_pred_proba = np.array([list(d.values()) for d in pred_onx])
+
+    return y_pred_proba
+
+
+def test_smoke(ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray):
+    metrics = empty_model_evaluator(ref_model, test_dataset, y_pred_proba)
     assert len(metrics) == 0
 
+
+def test_model_perf_evaluation_generates_metrics(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    """
+    This function tests the performance evaluation to ensure it generates some metrics.
+    """
+    metrics = model_perf_evaluator(ref_model, test_dataset, y_pred_proba)
+    print(metrics)
