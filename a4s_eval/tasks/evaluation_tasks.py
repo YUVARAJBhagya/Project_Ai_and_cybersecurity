@@ -197,7 +197,6 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                         evaluation.model, evaluation.dataset, y_curr_pred_proba
                     )
                     print(f"Generated {len(new_metrics)} metrics")
-                    print(new_metrics)
                     metrics.extend(new_metrics)
 
         except Exception as e:
