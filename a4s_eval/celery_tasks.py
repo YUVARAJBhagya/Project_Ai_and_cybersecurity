@@ -8,7 +8,7 @@ from a4s_eval.service.api_client import (
     mark_completed,
     mark_failed,
 )
-from a4s_eval.tasks.evaluation_tasks import dataset_evaluation_task
+from a4s_eval.tasks.evaluation_tasks import dataset_evaluation_task, model_evaluation_task
 
 
 @celery_app.task
@@ -24,9 +24,10 @@ def poll_and_run_evaluation() -> None:
     # Create a group for each evaluation ID
     print(f"Creating tasks for {len(eval_ids)} evaluations...")
     groups = [
-        group(
-            dataset_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id))
-        )
+        group([
+            dataset_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
+            model_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id))
+        ])
         for eval_id in eval_ids
     ]
 

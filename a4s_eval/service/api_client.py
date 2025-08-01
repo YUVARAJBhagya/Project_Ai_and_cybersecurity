@@ -79,14 +79,12 @@ def get_dataset_data(dataset_pid: str) -> pd.DataFrame:
 def get_onnx_model(model_pid: str) -> ort.capi.onnxruntime_inference_collection.InferenceSession:
     resp = requests.get(f"{API_URL_PREFIX}/models/{model_pid}/data", stream=True)
     resp.raise_for_status()
-    content_type = resp.headers.get("Content-Type", "")
+    content_disposition = resp.headers.get("content-disposition", "")
 
-    if "onnx" in content_type:
-        content_buffer = BytesIO(resp.content)
-        content_buffer.seek(0)
-        return ort.InferenceSession(content_buffer)
+    if "onnx" in content_disposition:
+        return ort.InferenceSession(resp.content)
     else:
-        raise ValueError("Unsupported model format")
+        raise ValueError(f"Unsupported model format")
 
 
 
