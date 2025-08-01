@@ -35,4 +35,4 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the FastAPI application by default
-CMD ["uvicorn", "a4s_api.eval:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "a4s_eval.main:app", "--host", "0.0.0.0", "--port", "8000"]
