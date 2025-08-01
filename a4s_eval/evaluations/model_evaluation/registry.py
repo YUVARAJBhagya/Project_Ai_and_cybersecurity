@@ -1,37 +1,37 @@
 from typing import Callable, Iterator, List, Protocol
 
-from a4s_eval.data_model.evaluation import Dataset
+from a4s_eval.data_model.evaluation import Dataset, Model
 from a4s_eval.data_model.metric import Metric
 
 
-class DataEvaluator(Protocol):
-    def __call__(self, reference: Dataset, evaluated: Dataset) -> List[Metric]:
-        """Run a specific data evaluation.
+class ModelEvaluator(Protocol):
+    def __call__(self, reference: Model, evaluate: Dataset) -> List[Metric]:
+        """Run a specific model evaluation.
 
         Args:
-            reference: The reference dataset to run the evaluation.
-            evaluated: The evaluated dataset.
+            reference: The reference model to run the evaluation.
+            evaluate: The evaluated dataset.
 
         """
         pass
 
 
-class DataEvaluatorRegistry:
+class ModelEvaluatorRegistry:
     def __init__(self):
         self._functions = {}
 
-    def register(self, name: str, func: DataEvaluator):
+    def register(self, name: str, func: ModelEvaluator):
         self._functions[name] = func
 
-    def __iter__(self) -> Iterator[tuple[str, DataEvaluator]]:
+    def __iter__(self) -> Iterator[tuple[str, ModelEvaluator]]:
         return iter(self._functions.items())
 
 
-data_evaluator_registry = DataEvaluatorRegistry()
+model_evaluator_registry = ModelEvaluatorRegistry()
 
 
-def data_evaluator(name: str) -> Callable[[DataEvaluator], list[Metric]]:
-    """Decorator to register a function as a data evaluator for A4S.
+def model_evaluator(name: str) -> Callable[[ModelEvaluator], list[Metric]]:
+    """Decorator to register a function as a model evaluator for A4S.
 
     Args:INSERT INTO model (id, pid, name, data, project_id, dataset_id)
     VALUES (
@@ -48,8 +48,8 @@ def data_evaluator(name: str) -> Callable[[DataEvaluator], list[Metric]]:
         Callable[[Evaluator], list[Metrics]]: A decorator function that registers the evaluation function as a data evaluator for A4S.
     """
 
-    def func_decorator(func: DataEvaluator) -> None:
-        data_evaluator_registry.register(name, func)
+    def func_decorator(func: ModelEvaluator) -> None:
+        model_evaluator_registry.register(name, func)
         return func
 
     return func_decorator
