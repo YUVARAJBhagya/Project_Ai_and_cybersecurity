@@ -6,6 +6,8 @@ variables:
   UV_VERSION: "0.5"
   PYTHON_VERSION: "3.12"
   BASE_LAYER: bookworm-slim
+  # GitLab CI creates a separate mountpoint for the build directory,
+  # so we need to copy instead of using hard links.
   UV_LINK_MODE: copy
   UV_CACHE_DIR: .uv-cache
 
@@ -29,7 +31,7 @@ checks:
     - uv run ruff format --check .
     - uv cache prune --ci
 
-test:
+pytest:
   stage: test
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
   cache:
@@ -39,18 +41,19 @@ test:
       paths:
         - $UV_CACHE_DIR
   script:
-    - uv sync
+    - uv sync --frozen --no-dev --group test
     - uv run pytest
     - uv cache prune --ci
-  allow_failure: false
 
-build:
+docker-build:
   stage: build
   image: docker:cli
   variables:
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
   script:
     - docker build --pull -t "$DOCKER_IMAGE_NAME" .
     - docker push "$DOCKER_IMAGE_NAME"
@@ -60,7 +63,10 @@ build:
         docker push "$CI_REGISTRY_IMAGE:latest"
       fi
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
     - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "containers"
+      when: on_success
     - when: never
