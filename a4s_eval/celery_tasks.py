@@ -1,6 +1,6 @@
 import uuid
 
-from celery import group, chord
+from celery import group
 
 from a4s_eval.celery_app import celery_app
 from a4s_eval.service.api_client import (

@@ -84,7 +84,7 @@ def get_onnx_model(model_pid: str) -> ort.capi.onnxruntime_inference_collection.
     if "onnx" in content_disposition:
         return ort.InferenceSession(resp.content)
     else:
-        raise ValueError(f"Unsupported model format")
+        raise ValueError("Unsupported model format")
 
 
 

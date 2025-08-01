@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from a4s_eval.data_model.evaluation import Dataset, FeatureType, Model
+from a4s_eval.data_model.evaluation import Dataset, Model
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.evaluations.model_evaluation.registry import model_evaluator
 from a4s_eval.evaluations.model_evaluation.metrics import prediction_metric_test
