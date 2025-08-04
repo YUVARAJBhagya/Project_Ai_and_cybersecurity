@@ -8,11 +8,12 @@ avoid redundant downloads.
 import os
 import pandas as pd
 from a4s_eval.utils import env
+from a4s_eval.utils.env import S3_DATASETS_BUCKET, S3_MODELS_BUCKET
 import requests
 
 # Directory names for caching different types of files
-DATASET_DIR = "datasets"
-MODEL_DIR = "models"
+DATASET_DIR = S3_DATASETS_BUCKET
+MODEL_DIR = S3_MODELS_BUCKET
 
 
 def download_file(url: str, path: str) -> None:
