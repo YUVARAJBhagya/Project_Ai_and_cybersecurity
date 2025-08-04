@@ -15,7 +15,7 @@ from a4s_eval.routers import evaluation
 app = FastAPI(
     title="A4S Evaluation",
     description="AI Audit as a Service API",
-    version="0.0.1",
+    version="1.0.0",
 )
 
 # Configure CORS middleware to allow requests from the frontend
@@ -38,6 +38,20 @@ async def root() -> dict[str, str]:
         dict[str, str]: A simple hello world message.
     """
     return {"message": "Hello World"}
+
+
+@app.get("/health")
+async def health_check() -> dict[str, str]:
+    """Health check endpoint for AWS load balancer.
+
+    Returns:
+        dict[str, str]: Health status information.
+    """
+    return {
+        "status": "healthy",
+        "service": "a4s-eval",
+        "version": "1.0.0"
+    }
 
 
 @app.get("/favicon.ico")
