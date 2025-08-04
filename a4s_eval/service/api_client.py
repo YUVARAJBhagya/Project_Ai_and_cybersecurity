@@ -21,18 +21,49 @@ class MetricDTO(BaseModel):
 
 
 def fetch_pending_evaluations() -> list[uuid.UUID]:
-    resp = requests.get(f"{API_URL_PREFIX}/evaluations?status=pending")
-    if resp.status_code != 200:
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    
+    try:
+        logger.info("=== FETCH_PENDING_EVALUATIONS START ===")
+        logger.info(f"1. About to call API: {API_URL_PREFIX}/evaluations?status=pending")
+        
+        resp = requests.get(f"{API_URL_PREFIX}/evaluations?status=pending", timeout=30)
+        logger.info(f"2. API call completed. Status: {resp.status_code}")
+        
+        if resp.status_code != 200:
+            logger.error(f"3. API returned non-200 status: {resp.status_code}")
+            return []
+        
+        evaluations = resp.json()
+        logger.info(f"4. Parsed evaluations: {evaluations}")
+        
+        claimed_pids = []
+        logger.info(f"5. Processing {len(evaluations)} evaluations...")
+        
+        for i, e in enumerate(evaluations):
+            logger.info(f"6.{i+1} Processing evaluation: {e}")
+            try:
+                if claim_evaluation(e["evaluation_pid"]):
+                    claimed_pids.append(uuid.UUID(e["evaluation_pid"]))
+                    logger.info(f"7.{i+1} Successfully claimed evaluation: {e['evaluation_pid']}")
+                else:
+                    logger.warning(f"8.{i+1} Failed to claim evaluation: {e['evaluation_pid']}")
+            except Exception as e:
+                logger.error(f"ERROR processing evaluation {e}: {str(e)}")
+        
+        logger.info(f"9. Final claimed_pids: {claimed_pids}")
+        return claimed_pids
+        
+    except Exception as e:
+        logger.error(f"ERROR in fetch_pending_evaluations: {str(e)}")
+        logger.error(f"Exception type: {type(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return []
-    evaluations = resp.json()
-    claimed_pids = []
-    print(evaluations)
-    for e in evaluations:
-        print(e)
-        if claim_evaluation(e["evaluation_pid"]):
-            claimed_pids.append(uuid.UUID(e["evaluation_pid"]))
-    print(claimed_pids)
-    return claimed_pids
+    finally:
+        logger.info("=== FETCH_PENDING_EVALUATIONS END ===")
 
 
 def claim_evaluation(evaluation_pid: uuid.UUID) -> bool:
