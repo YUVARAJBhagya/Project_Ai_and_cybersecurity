@@ -47,11 +47,7 @@ async def health_check() -> dict[str, str]:
     Returns:
         dict[str, str]: Health status information.
     """
-    return {
-        "status": "healthy",
-        "service": "a4s-eval",
-        "version": "1.0.0"
-    }
+    return {"status": "healthy", "service": "a4s-eval", "version": "1.0.0"}
 
 
 @app.get("/favicon.ico")

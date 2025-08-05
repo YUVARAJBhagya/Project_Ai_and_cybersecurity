@@ -17,20 +17,20 @@ logger.info("=== CELERY APP CREATED ===")
 
 # Configure Celery settings for 30-minute task execution with heartbeat
 celery_config = {
-    'task_acks_late': True,  # Acknowledge task only after completion
-    'worker_prefetch_multiplier': 1,  # Process one task at a time
-    'task_soft_time_limit': 1800,  # 30 minutes soft limit
-    'task_time_limit': 2100,  # 35 minutes hard limit (buffer for cleanup)
+    "task_acks_late": True,  # Acknowledge task only after completion
+    "worker_prefetch_multiplier": 1,  # Process one task at a time
+    "task_soft_time_limit": 1800,  # 30 minutes soft limit
+    "task_time_limit": 2100,  # 35 minutes hard limit (buffer for cleanup)
 }
 
 # Only add SSL configuration in production
 if env.IS_PRODUCTION:
-    celery_config['broker_transport_options'] = {
-        'ssl': {
-            'cert_reqs': 0,  # CERT_NONE as integer
-            'ca_certs': None,
-            'certfile': None,
-            'keyfile': None,
+    celery_config["broker_transport_options"] = {
+        "ssl": {
+            "cert_reqs": 0,  # CERT_NONE as integer
+            "ca_certs": None,
+            "certfile": None,
+            "keyfile": None,
         }
     }
 
