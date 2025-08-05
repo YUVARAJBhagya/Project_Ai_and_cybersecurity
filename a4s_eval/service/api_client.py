@@ -74,9 +74,11 @@ def get_dataset_data(dataset_pid: str) -> pd.DataFrame:
         return pd.read_csv(content_buffer)
     else:
         raise ValueError("Unsupported dataset format")
-    
 
-def get_onnx_model(model_pid: str) -> ort.capi.onnxruntime_inference_collection.InferenceSession:
+
+def get_onnx_model(
+    model_pid: str,
+) -> ort.capi.onnxruntime_inference_collection.InferenceSession:
     resp = requests.get(f"{API_URL_PREFIX}/models/{model_pid}/data", stream=True)
     resp.raise_for_status()
     content_disposition = resp.headers.get("content-disposition", "")
@@ -85,7 +87,6 @@ def get_onnx_model(model_pid: str) -> ort.capi.onnxruntime_inference_collection.
         return ort.InferenceSession(resp.content)
     else:
         raise ValueError("Unsupported model format")
-
 
 
 def get_evaluation_request(evaluation_pid: uuid.UUID) -> dict[str, Any]:

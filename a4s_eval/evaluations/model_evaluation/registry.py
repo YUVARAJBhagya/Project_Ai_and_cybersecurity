@@ -7,7 +7,9 @@ from a4s_eval.data_model.metric import Metric
 
 
 class ModelPredProbaEvaluator(Protocol):
-    def __call__(self, model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> List[Metric]:
+    def __call__(
+        self, model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+    ) -> List[Metric]:
         """Run a specific model evaluation.
 
         Args:
@@ -33,7 +35,9 @@ class ModelPredProbaEvaluatorRegistry:
 model_pred_proba_evaluator_registry = ModelPredProbaEvaluatorRegistry()
 
 
-def model_pred_proba_evaluator(name: str) -> Callable[[ModelPredProbaEvaluator], list[Metric]]:
+def model_pred_proba_evaluator(
+    name: str,
+) -> Callable[[ModelPredProbaEvaluator], list[Metric]]:
     """Decorator to register a function as a model evaluator for A4S.
 
     Args:INSERT INTO model (id, pid, name, data, project_id, dataset_id)

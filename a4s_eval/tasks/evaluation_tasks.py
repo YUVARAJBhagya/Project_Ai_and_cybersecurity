@@ -4,7 +4,9 @@ import numpy as np
 from a4s_eval.celery_app import celery_app
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.evaluations.data_evaluation.registry import data_evaluator_registry
-from a4s_eval.evaluations.model_evaluation.registry import model_pred_proba_evaluator_registry
+from a4s_eval.evaluations.model_evaluation.registry import (
+    model_pred_proba_evaluator_registry,
+)
 from a4s_eval.service.api_client import (
     get_dataset_data,
     get_onnx_model,
@@ -167,7 +169,6 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
         y_pred_proba = np.array([list(d.values()) for d in pred_onx])
         print("Computation finished for Y prediction probability")
 
-
         try:
             date_iterator = DateIterator(
                 date_round="1 D",
@@ -182,7 +183,7 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                 iteration_count += 1
                 print(f"Iteration {i}, date: {date_val}, data shape: {x_curr.shape}")
                 evaluation.dataset.data = x_curr
-                
+
                 ## Get the current y_pred_proba for current date batch
                 ## ATTENTION: This assumes that the index of x_test is not predifined
                 y_curr_pred_proba = y_pred_proba[list(x_curr.index)]

@@ -14,7 +14,7 @@ from a4s_eval.evaluations.model_evaluation.perf_evaluation import (
     classification_f1_score_evaluator,
     classification_precision_evaluator,
     classification_recall_evaluator,
-    classification_matthews_corrcoef_evaluator
+    classification_matthews_corrcoef_evaluator,
 )
 
 
@@ -69,7 +69,7 @@ def ref_model(ref_dataset: Dataset) -> Model:
 
 @pytest.fixture
 def y_pred_proba(ref_model: Model, test_dataset: Dataset) -> np.ndarray:
-    session = ort.InferenceSession('./tests/data/lcld_v2_random_forest.onnx')
+    session = ort.InferenceSession("./tests/data/lcld_v2_random_forest.onnx")
     df = test_dataset.data[[f.name for f in test_dataset.shape.features]]
     x_test = df.astype(np.double).to_numpy()
 
@@ -129,7 +129,9 @@ def test_model_recall_evaluation(
 def test_model_matthews_corrcoef_evaluation(
     ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
 ):
-    metrics = classification_matthews_corrcoef_evaluator(ref_model, test_dataset, y_pred_proba)
+    metrics = classification_matthews_corrcoef_evaluator(
+        ref_model, test_dataset, y_pred_proba
+    )
     assert len(metrics) == 1
     assert metrics[0].name == "MCC"
     assert isinstance(metrics[0].score, float)

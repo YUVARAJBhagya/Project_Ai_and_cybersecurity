@@ -33,12 +33,16 @@ def robust_roc_auc_score(y_true: np.ndarray, y_pred_proba: np.ndarray) -> np.nda
 
 
 @model_pred_proba_evaluator(name="Empty model pred proba evaluator")
-def empty_model_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def empty_model_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     return []
 
 
 @model_pred_proba_evaluator(name="Classification Performance evaluator: Accuracy")
-def classification_accuracy_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def classification_accuracy_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
@@ -54,7 +58,9 @@ def classification_accuracy_evaluator(model: Model, dataset: Dataset, y_pred_pro
 
 
 @model_pred_proba_evaluator(name="Classification Performance evaluator: F1 Score")
-def classification_f1_score_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def classification_f1_score_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
@@ -70,7 +76,9 @@ def classification_f1_score_evaluator(model: Model, dataset: Dataset, y_pred_pro
 
 
 @model_pred_proba_evaluator(name="Classification Performance evaluator: Precision")
-def classification_precision_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def classification_precision_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
@@ -78,7 +86,7 @@ def classification_precision_evaluator(model: Model, dataset: Dataset, y_pred_pr
 
     metric = Metric(
         name="Precision",
-        score=precision_score(y_true, y_pred, zero_division=0.),
+        score=precision_score(y_true, y_pred, zero_division=0.0),
         time=date,
     )
 
@@ -86,7 +94,9 @@ def classification_precision_evaluator(model: Model, dataset: Dataset, y_pred_pr
 
 
 @model_pred_proba_evaluator(name="Classification Performance evaluator: Recall")
-def classification_recall_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def classification_recall_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
@@ -101,8 +111,12 @@ def classification_recall_evaluator(model: Model, dataset: Dataset, y_pred_proba
     return [metric]
 
 
-@model_pred_proba_evaluator(name="Classification Performance evaluator: Matthews Correlation Coefficient")
-def classification_matthews_corrcoef_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+@model_pred_proba_evaluator(
+    name="Classification Performance evaluator: Matthews Correlation Coefficient"
+)
+def classification_matthews_corrcoef_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
@@ -114,11 +128,13 @@ def classification_matthews_corrcoef_evaluator(model: Model, dataset: Dataset, y
         time=date,
     )
 
-    return [metric] 
+    return [metric]
 
 
 @model_pred_proba_evaluator(name="Classification Performance evaluator: RROCAUC")
-def classification_roc_auc_evaluator(model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> list[Metric]:
+def classification_roc_auc_evaluator(
+    model: Model, dataset: Dataset, y_pred_proba: np.ndarray
+) -> list[Metric]:
     date = pd.to_datetime(dataset.data[dataset.shape.date.name]).max()
     date = date.to_pydatetime()
     y_true = dataset.data[dataset.shape.target.name].to_numpy()
