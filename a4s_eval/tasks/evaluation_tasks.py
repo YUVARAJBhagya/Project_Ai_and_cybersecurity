@@ -4,7 +4,7 @@ import numpy as np
 from a4s_eval.celery_app import celery_app
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.evaluations.data_evaluation.registry import data_evaluator_registry
-from a4s_eval.evaluations.model_evaluation.registry import model_evaluator_registry
+from a4s_eval.evaluations.model_evaluation.registry import model_pred_proba_evaluator_registry
 from a4s_eval.service.api_client import (
     get_dataset_data,
     get_onnx_model,
@@ -130,7 +130,7 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
     print(f"API_URL_PREFIX: {API_URL_PREFIX}")
 
     # Check if any evaluators are registered
-    evaluator_list = list(model_evaluator_registry)
+    evaluator_list = list(model_pred_proba_evaluator_registry)
     print(f"Registered evaluators: {len(evaluator_list)}")
     for name, _ in evaluator_list:
         print(f"  - {name}")
@@ -187,10 +187,13 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                 iteration_count += 1
                 print(f"Iteration {i}, date: {date_val}, data shape: {x_curr.shape}")
                 evaluation.dataset.data = x_curr
+                
+                ## Get the current y_pred_proba for current date batch
+                ## ATTENTION: This assumes that the index of x_test is not predifined
                 y_curr_pred_proba = y_pred_proba[list(x_curr.index)]
 
                 evaluator_count = 0
-                for name, evaluator in model_evaluator_registry:
+                for name, evaluator in model_pred_proba_evaluator_registry:
                     evaluator_count += 1
                     print(f"Running evaluator: {name}")
                     new_metrics = evaluator(

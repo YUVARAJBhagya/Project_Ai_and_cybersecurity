@@ -6,33 +6,34 @@ from a4s_eval.data_model.evaluation import Dataset, Model
 from a4s_eval.data_model.metric import Metric
 
 
-class ModelEvaluator(Protocol):
-    def __call__(self, reference: Model, evaluate: Dataset, y_pred_proba: np.ndarray) -> List[Metric]:
+class ModelPredProbaEvaluator(Protocol):
+    def __call__(self, model: Model, dataset: Dataset, y_pred_proba: np.ndarray) -> List[Metric]:
         """Run a specific model evaluation.
 
         Args:
-            reference: The reference model to run the evaluation.
-            evaluate: The evaluated dataset.
+            model: The model to run the evaluation.
+            dataset: The dataset to evaluate.
+            y_pred_proba: The predicted probabilities from the model on the dataset.
 
         """
         pass
 
 
-class ModelEvaluatorRegistry:
+class ModelPredProbaEvaluatorRegistry:
     def __init__(self):
         self._functions = {}
 
-    def register(self, name: str, func: ModelEvaluator):
+    def register(self, name: str, func: ModelPredProbaEvaluator):
         self._functions[name] = func
 
-    def __iter__(self) -> Iterator[tuple[str, ModelEvaluator]]:
+    def __iter__(self) -> Iterator[tuple[str, ModelPredProbaEvaluator]]:
         return iter(self._functions.items())
 
 
-model_evaluator_registry = ModelEvaluatorRegistry()
+model_pred_proba_evaluator_registry = ModelPredProbaEvaluatorRegistry()
 
 
-def model_evaluator(name: str) -> Callable[[ModelEvaluator], list[Metric]]:
+def model_evaluator(name: str) -> Callable[[ModelPredProbaEvaluator], list[Metric]]:
     """Decorator to register a function as a model evaluator for A4S.
 
     Args:INSERT INTO model (id, pid, name, data, project_id, dataset_id)
@@ -50,8 +51,8 @@ def model_evaluator(name: str) -> Callable[[ModelEvaluator], list[Metric]]:
         Callable[[Evaluator], list[Metrics]]: A decorator function that registers the evaluation function as a data evaluator for A4S.
     """
 
-    def func_decorator(func: ModelEvaluator) -> None:
-        model_evaluator_registry.register(name, func)
+    def func_decorator(func: ModelPredProbaEvaluator) -> None:
+        model_pred_proba_evaluator_registry.register(name, func)
         return func
 
     return func_decorator
