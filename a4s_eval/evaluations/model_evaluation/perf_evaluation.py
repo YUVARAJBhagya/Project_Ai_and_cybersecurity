@@ -78,7 +78,7 @@ def classification_precision_evaluator(model: Model, dataset: Dataset, y_pred_pr
 
     metric = Metric(
         name="Precision",
-        score=precision_score(y_true, y_pred),
+        score=precision_score(y_true, y_pred, zero_division=0.),
         time=date,
     )
 
