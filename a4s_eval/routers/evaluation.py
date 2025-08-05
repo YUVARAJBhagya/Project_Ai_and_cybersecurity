@@ -10,7 +10,6 @@ router = APIRouter()
 @router.get("/evaluate")
 async def evaluate() -> dict[str, str]:
     """Trigger evaluation of pending evaluatsions"""
-    import logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     
