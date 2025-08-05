@@ -33,7 +33,7 @@ class ModelPredProbaEvaluatorRegistry:
 model_pred_proba_evaluator_registry = ModelPredProbaEvaluatorRegistry()
 
 
-def model_evaluator(name: str) -> Callable[[ModelPredProbaEvaluator], list[Metric]]:
+def model_pred_proba_evaluator(name: str) -> Callable[[ModelPredProbaEvaluator], list[Metric]]:
     """Decorator to register a function as a model evaluator for A4S.
 
     Args:INSERT INTO model (id, pid, name, data, project_id, dataset_id)

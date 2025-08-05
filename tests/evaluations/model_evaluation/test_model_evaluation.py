@@ -1,14 +1,20 @@
 import uuid
+import datetime
+import pytest
 
 import numpy as np
 import pandas as pd
-import pytest
 import onnxruntime as ort
 
 from a4s_eval.data_model.evaluation import Dataset, DataShape, Model
 from a4s_eval.evaluations.model_evaluation.perf_evaluation import (
     empty_model_evaluator,
-    model_perf_evaluator
+    classification_accuracy_evaluator,
+    classification_roc_auc_evaluator,
+    classification_f1_score_evaluator,
+    classification_precision_evaluator,
+    classification_recall_evaluator,
+    classification_matthews_corrcoef_evaluator
 )
 
 
@@ -80,11 +86,61 @@ def test_smoke(ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
     assert len(metrics) == 0
 
 
-def test_model_perf_evaluation_generates_metrics(
+def test_model_accuracy_evaluation(
     ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
 ):
-    """
-    This function tests the performance evaluation to ensure it generates some metrics.
-    """
-    metrics = model_perf_evaluator(ref_model, test_dataset, y_pred_proba)
-    print(metrics)
+    metrics = classification_accuracy_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "Accuracy"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
+
+
+def test_model_f1_score_evaluation(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    metrics = classification_f1_score_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "F1"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
+
+
+def test_model_precision_evaluation(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    metrics = classification_precision_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "Precision"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
+
+
+def test_model_recall_evaluation(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    metrics = classification_recall_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "Recall"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
+
+
+def test_model_matthews_corrcoef_evaluation(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    metrics = classification_matthews_corrcoef_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "MCC"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
+
+
+def test_model_roc_auc_evaluation(
+    ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray
+):
+    metrics = classification_roc_auc_evaluator(ref_model, test_dataset, y_pred_proba)
+    assert len(metrics) == 1
+    assert metrics[0].name == "ROCAUC"
+    assert isinstance(metrics[0].score, float)
+    assert isinstance(metrics[0].time, datetime.datetime)
