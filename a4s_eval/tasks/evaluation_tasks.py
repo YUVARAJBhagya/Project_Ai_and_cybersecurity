@@ -115,10 +115,6 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
     except Exception as e:
         print(f"Error in evaluation task: {e}")
         print("Marking evaluation as failed...")
-        try:
-            mark_failed(evaluation_pid)
-        except Exception as mark_error:
-            print(f"Error marking evaluation as failed: {mark_error}")
         raise
 
 
@@ -233,8 +229,4 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
     except Exception as e:
         print(f"Error in evaluation task: {e}")
         print("Marking evaluation as failed...")
-        try:
-            mark_failed(evaluation_pid)
-        except Exception as mark_error:
-            print(f"Error marking evaluation as failed: {mark_error}")
         raise
