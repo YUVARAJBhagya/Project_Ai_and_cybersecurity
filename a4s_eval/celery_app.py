@@ -1,5 +1,4 @@
 from celery import Celery
-import logging
 
 from a4s_eval.utils import env
 
