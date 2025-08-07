@@ -1,29 +1,27 @@
-import logging
 # from typing import Any
 
 from fastapi import APIRouter
 from a4s_eval.celery_tasks import poll_and_run_evaluation
+from a4s_eval.utils.logging import get_logger
 # from a4s_eval.utils import env
 
 router = APIRouter()
+logger = get_logger()
 
 
 @router.get("/evaluate")
 async def evaluate() -> dict[str, str]:
     """Trigger evaluation of pending evaluatsions"""
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
-
     try:
-        logger.info("=== EVALUATE ENDPOINT START ===")
-        logger.info("1. About to call poll_and_run_evaluation.delay()")
+        logger.debug("=== EVALUATE ENDPOINT START ===")
+        logger.debug("1. About to call poll_and_run_evaluation.delay()")
 
         # Launch the evaluation task asynchronously
         task = poll_and_run_evaluation.delay()
 
-        logger.info("2. poll_and_run_evaluation.delay() completed successfully")
-        logger.info(f"3. Task ID: {task.id}")
-        logger.info("4. About to return response")
+        logger.debug("2. poll_and_run_evaluation.delay() completed successfully")
+        logger.debug(f"3. Task ID: {task.id}")
+        logger.debug("4. About to return response")
 
         return {
             "message": "Evaluation started.",
@@ -38,7 +36,7 @@ async def evaluate() -> dict[str, str]:
         logger.error(f"Traceback: {traceback.format_exc()}")
         return {"message": f"Failed to start evaluation: {str(e)}", "status": "error"}
     finally:
-        logger.info("=== EVALUATE ENDPOINT END ===")
+        logger.debug("=== EVALUATE ENDPOINT END ===")
 
 
 # @router.get("/evaluate/test-api-connection")

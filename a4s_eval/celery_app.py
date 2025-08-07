@@ -4,6 +4,9 @@ import logging
 from a4s_eval.utils import env
 
 import requests
+from a4s_eval.utils.logging import get_logger
+
+logger = get_logger()
 
 
 def is_running_on_aws():
@@ -14,17 +17,14 @@ def is_running_on_aws():
         return False
 
 
-# Add logging to debug Redis URL
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.info(f"CELERY REDIS BACKEND URL: {env.REDIS_BACKEND_URL}")
-logger.info("=== CELERY APP INITIALIZATION ===")
+logger.debug(f"CELERY REDIS BACKEND URL: {env.REDIS_BACKEND_URL}")
+logger.debug("=== CELERY APP INITIALIZATION ===")
 
 celery_app: Celery = Celery(
     __name__, broker=env.CELERY_BROKER_URL, backend=env.REDIS_BACKEND_URL
 )
 
-logger.info("=== CELERY APP CREATED ===")
+logger.debug("=== CELERY APP CREATED ===")
 
 # Configure Celery settings for 30-minute task execution with heartbeat
 celery_config = {
@@ -47,4 +47,4 @@ if is_running_on_aws():
 
 celery_app.conf.update(celery_config)
 
-logger.info("=== CELERY CONFIGURATION COMPLETED ===")
+logger.debug("=== CELERY CONFIGURATION COMPLETED ===")
