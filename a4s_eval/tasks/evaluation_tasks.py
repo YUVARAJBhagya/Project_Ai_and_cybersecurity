@@ -12,6 +12,7 @@ from a4s_eval.service.api_client import (
     get_onnx_model,
     get_evaluation,
     post_metrics,
+    mark_failed,
 )
 from a4s_eval.utils.dates import DateIterator
 from a4s_eval.utils.env import API_URL_PREFIX
@@ -126,6 +127,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
         except Exception as mark_error:
             logger.error(f"Error marking evaluation as failed: {mark_error}")
         raise
+
 
 @celery_app.task
 def model_evaluation_task(evaluation_pid: uuid.UUID):
