@@ -8,12 +8,12 @@ logger = get_logger()
 
 
 class DataEvaluator(Protocol):
-    def __call__(self, reference: Dataset, ewvaluated: Dataset) -> List[Metric]:
+    def __call__(self, reference: Dataset, evaluated: Dataset) -> List[Metric]:
         """Run a specific data evaluation.
 
         Args:
             reference: The reference dataset to run the evaluation.
-            evaluated: The evaluaded dataset.
+            evaluated: The evaluated dataset.
 
         """
         pass

@@ -8,7 +8,10 @@ from a4s_eval.service.api_client import (
     mark_completed,
     mark_failed,
 )
-from a4s_eval.tasks.evaluation_tasks import dataset_evaluation_task
+from a4s_eval.tasks.evaluation_tasks import (
+    dataset_evaluation_task,
+    model_evaluation_task,
+)
 from a4s_eval.utils.logging import get_logger
 
 logger = get_logger()
@@ -31,7 +34,15 @@ def poll_and_run_evaluation() -> None:
             return
 
         logger.debug(f"5. Creating groups for {len(eval_ids)} evaluations...")
-        groups = [group(dataset_evaluation_task.s(eval_id)) for eval_id in eval_ids]
+        groups = [
+        group(
+            [
+                dataset_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
+                model_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
+            ]
+        )
+        for eval_id in eval_ids
+    ]
         logger.debug(f"6. Groups created: {len(groups)} groups")
 
         logger.debug("7. Starting to apply groups...")
@@ -71,6 +82,16 @@ def finalize_evaluation(evaluation_id: uuid.UUID) -> None:
     except Exception as e:
         logger.error(f"Failed to mark evaluation {evaluation_id} as completed: {e}")
         mark_failed(evaluation_id)
+
+
+@celery_app.task
+def handle_error(evaluation_id, request, exc, traceback) -> None:
+    print(f"Error in evaluation {evaluation_id}:")
+
+    print(f"--\n\n{request} {exc} {traceback}")
+
+    mark_failed(evaluation_id)
+    print(f"Evaluation {evaluation_id} marked as failed due to error.")
 
 
 # @celery_app.task
