@@ -38,7 +38,7 @@ class Feature(BaseModel):
     """
 
     # Feature attributes
-    # pid: uuid.UUID
+    pid: uuid.UUID
     name: str
     feature_type: FeatureType
     min_value: float | Any

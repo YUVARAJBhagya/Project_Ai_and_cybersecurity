@@ -30,6 +30,7 @@ def auto_discover_datashape(
             continue
 
         _feature = Feature(
+            pid=uuid.uuid4(),
             name=col,
             feature_type=type_mapping[type(df[col][0])],
             min_value=df[col].min(),
@@ -40,12 +41,14 @@ def auto_discover_datashape(
         print(type(df[col][0]), type_mapping[type(df[col][0])], df[col].min())
         
     date = Feature(
+        pid=uuid.uuid4(),
         name="issue_d",
         feature_type=FeatureType.DATE,
         min_value=0,
         max_value=0,
     )
     target = Feature(
+        pid=uuid.uuid4(),
         name="charged_off",
         feature_type=FeatureType.CATEGORICAL,
         min_value=0,
