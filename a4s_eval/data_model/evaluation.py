@@ -4,7 +4,7 @@ from typing import Any
 
 import pandas as pd
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 
 
 class FeatureType(str, enum.Enum):
@@ -38,17 +38,21 @@ class Feature(BaseModel):
     """
 
     # Feature attributes
-    pid: uuid.UUID
+    # pid: uuid.UUID
     name: str
     feature_type: FeatureType
     min_value: float | Any
     max_value: float | Any
 
+    @field_serializer("feature_type")
+    def serialize_feature_type(self, feature_type: FeatureType, _info) -> str:
+        return feature_type.value
+
 
 class DataShape(BaseModel):
     features: list[Feature]
-    target: Feature
-    date: Feature
+    target: Feature | None = None
+    date: Feature | None = None
 
 
 class Dataset(BaseModel):
