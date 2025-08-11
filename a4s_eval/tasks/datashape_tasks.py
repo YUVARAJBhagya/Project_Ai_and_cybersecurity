@@ -1,5 +1,4 @@
 import uuid
-import numpy as np
 
 from a4s_eval.celery_app import celery_app
 from a4s_eval.data_model.evaluation import DataShape, Feature, FeatureType
@@ -37,6 +36,9 @@ def auto_discover_datashape(datashape_pid: uuid.UUID) -> None:
                 min_value=df[col].min(),
                 max_value=df[col].max(),
             )
+            # If it's a date feature, update min/max values
+            # Continue statement because date is not stored in features
+            # Need an strategy if multiple object dtype
             if type_mapping[col_type] == FeatureType.DATE:
                 _feature.min_value = 0
                 _feature.max_value = 0
