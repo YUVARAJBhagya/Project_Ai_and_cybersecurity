@@ -9,54 +9,48 @@ from a4s_eval.service.api_client import (
     put_datashape,
     put_datashape_status,
 )
+from a4s_eval.utils.logging import get_logger
 
 
 type_mapping = {
-    np.int64: FeatureType.INTEGER,
-    np.float64: FeatureType.FLOAT,
-    str: FeatureType.CATEGORICAL,
+    "int64": FeatureType.INTEGER,
+    "float64": FeatureType.FLOAT,
+    "object": FeatureType.DATE,
 }
 
 
 @celery_app.task
 def auto_discover_datashape(datashape_pid: uuid.UUID) -> None:
-    data = get_datashape_request(datashape_pid)
-    dataset_pid = data["dataset_pid"]
-    df = get_dataset_data(dataset_pid)
+    try:
+        data = get_datashape_request(datashape_pid)
+        dataset_pid = data["dataset_pid"]
+        df = get_dataset_data(dataset_pid)
 
-    features = []
-    for col in df.columns:
-        if col == "issue_d" or col == "charged_off":
-            continue
+        date = None
+        features = []
+        for col in df.columns:
+            col_type = str(df[col].dtype)
+            _feature = Feature(
+                pid=uuid.uuid4(),
+                name=col,
+                feature_type=type_mapping[col_type],
+                min_value=df[col].min(),
+                max_value=df[col].max(),
+            )
+            if type_mapping[col_type] == FeatureType.DATE:
+                _feature.min_value = 0
+                _feature.max_value = 0
+                date = _feature
+                continue  # Skip date features for now
+            features.append(_feature)
 
-        _feature = Feature(
-            pid=uuid.uuid4(),
-            name=col,
-            feature_type=type_mapping[type(df[col][0])],
-            min_value=df[col].min(),
-            max_value=df[col].max(),
+        datashape = DataShape(features=features, date=date, target=None)
+
+        get_logger().debug(datashape.model_dump_json())
+        put_datashape(datashape_pid, datashape)
+        put_datashape_status(datashape_pid, "auto")
+    except Exception as e:
+        get_logger().error(
+            f"Error during auto-discovery of datashape {datashape_pid}: {e}"
         )
-        features.append(_feature)
-        print(_feature)
-        print(type(df[col][0]), type_mapping[type(df[col][0])], df[col].min())
-
-    date = Feature(
-        pid=uuid.uuid4(),
-        name="issue_d",
-        feature_type=FeatureType.DATE,
-        min_value=0,
-        max_value=0,
-    )
-    target = Feature(
-        pid=uuid.uuid4(),
-        name="charged_off",
-        feature_type=FeatureType.CATEGORICAL,
-        min_value=0,
-        max_value=0,
-    )
-
-    datashape = DataShape(features=features, date=date, target=target)
-
-    print(datashape)
-    put_datashape(datashape_pid, datashape)
-    put_datashape_status(datashape_pid, "auto")
+        put_datashape_status(datashape_pid, "failed")
