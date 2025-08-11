@@ -9,7 +9,8 @@ from a4s_eval.utils.env import API_URL_PREFIX
 from a4s_eval.service.api_client import (
     get_dataset_data,
     get_datashape_request,
-    put_datashape
+    put_datashape,
+    put_datashape_status
 )
 
 
@@ -66,3 +67,4 @@ def auto_discover_datashape(
 
     print(datashape)
     put_datashape(datashape_pid, datashape)
+    put_datashape_status(datashape_pid, "auto")
