@@ -132,19 +132,18 @@ def post_metrics(evaluation_pid: uuid.UUID, metrics: list[Metric]) -> requests.R
 
 
 def get_datashape_request(datashape_pid: uuid.UUID) -> dict[str, Any]:
-    resp = requests.get(
-        f"{API_URL_PREFIX}/datashape/{datashape_pid}"
-    )
+    resp = requests.get(f"{API_URL_PREFIX}/datashape/{datashape_pid}")
     resp.raise_for_status()
     return resp.json()
 
+
 def put_datashape(datashape_pid: uuid.UUID, datashape: DataShape) -> requests.Response:
     resp = requests.put(
-        f"{API_URL_PREFIX}/datashape/{datashape_pid}",
-        json=datashape.model_dump()
+        f"{API_URL_PREFIX}/datashape/{datashape_pid}", json=datashape.model_dump()
     )
     resp.raise_for_status()
     return resp
+
 
 def put_datashape_status(datashape_pid: uuid.UUID, status: str) -> requests.Response:
     resp = requests.put(
