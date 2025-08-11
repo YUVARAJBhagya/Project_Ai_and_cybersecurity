@@ -10,5 +10,5 @@ router = APIRouter(tags=["datashapes"])
 async def autodiscover(
     datashape_pid: uuid.UUID,
 ) -> dict[str, str]:
-    auto_discover_datashape(datashape_pid)
+    auto_discover_datashape.delay(datashape_pid)
     return {"message": "discovery started."}
