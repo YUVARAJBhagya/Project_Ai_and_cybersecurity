@@ -8,6 +8,8 @@ from a4s_eval.data_model.evaluation import Dataset, DataShape, Feature, FeatureT
 from a4s_eval.utils.env import API_URL_PREFIX
 from a4s_eval.service.api_client import (
     get_dataset_data,
+    get_datashape_request,
+    put_datashape
 )
 
 
@@ -19,10 +21,11 @@ type_mapping = {
 
 @celery_app.task
 def auto_discover_datashape(
-    dataset_pid: uuid.UUID
+    datashape_pid: uuid.UUID
 ) -> None:
+    data = get_datashape_request(datashape_pid)
+    dataset_pid = data["dataset_pid"]
     df = get_dataset_data(dataset_pid)
-    print(df.keys())
 
     features = []
     for col in df.columns:
@@ -61,4 +64,5 @@ def auto_discover_datashape(
         target=target
     )
 
-    print(datashape.model_dump_json())
+    print(datashape)
+    put_datashape(datashape_pid, datashape)
