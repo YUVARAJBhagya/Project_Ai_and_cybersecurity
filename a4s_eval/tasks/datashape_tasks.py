@@ -14,7 +14,9 @@ from a4s_eval.utils.logging import get_logger
 type_mapping = {
     "int64": FeatureType.INTEGER,
     "float64": FeatureType.FLOAT,
-    "object": FeatureType.DATE,
+    # object type mostly comes from textual data
+    "object": FeatureType.CATEGORICAL,
+    "datetime64[ns]": FeatureType.DATE,
 }
 
 
@@ -29,21 +31,22 @@ def auto_discover_datashape(datashape_pid: uuid.UUID) -> None:
         features = []
         for col in df.columns:
             col_type = str(df[col].dtype)
+            col_type = type_mapping[col_type]
+
             _feature = Feature(
                 pid=uuid.uuid4(),
                 name=col,
-                feature_type=type_mapping[col_type],
+                feature_type=col_type,
                 min_value=df[col].min(),
                 max_value=df[col].max(),
             )
-            # If it's a date feature, update min/max values
-            # Continue statement because date is not stored in features
-            # Need an strategy if multiple object dtype
-            if type_mapping[col_type] == FeatureType.DATE:
+
+            # Manual setting categorical features min/max to 0
+            # as Feature min max are float
+            if col_type in [FeatureType.CATEGORICAL, FeatureType.DATE]:
                 _feature.min_value = 0
                 _feature.max_value = 0
-                date = _feature
-                continue  # Skip date features for now
+
             features.append(_feature)
 
         datashape = DataShape(features=features, date=date, target=None)
