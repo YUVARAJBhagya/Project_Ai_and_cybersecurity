@@ -24,7 +24,7 @@ type_mapping = {
 def auto_discover_datashape(datashape_pid: uuid.UUID) -> None:
     try:
         data = get_datashape_request(datashape_pid)
-        dataset_pid = data["dataset_pid"]
+        dataset_pid = data["pid"]
         df = get_dataset_data(dataset_pid)
 
         date = None
