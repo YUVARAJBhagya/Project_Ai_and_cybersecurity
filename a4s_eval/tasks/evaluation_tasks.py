@@ -13,6 +13,7 @@ from a4s_eval.service.api_client import (
     get_evaluation,
     post_metrics,
     mark_failed,
+    mark_completed,
 )
 from a4s_eval.utils.dates import DateIterator
 from a4s_eval.utils.env import API_URL_PREFIX
@@ -116,6 +117,11 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
         except Exception as e:
             logger.error(f"Error posting metrics: {e}")
             raise
+
+        try:
+            mark_completed(evaluation_pid)
+        except Exception as mark_error:
+            logger.error(f"Error marking evaluation as completed: {mark_error}")
 
         logger.debug("Evaluation task completed successfully")
 
