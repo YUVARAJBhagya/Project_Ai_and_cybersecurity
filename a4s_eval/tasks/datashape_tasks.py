@@ -10,7 +10,6 @@ from a4s_eval.service.api_client import (
 )
 from a4s_eval.utils.logging import get_logger
 
-
 type_mapping = {
     "int64": FeatureType.INTEGER,
     "float64": FeatureType.FLOAT,
