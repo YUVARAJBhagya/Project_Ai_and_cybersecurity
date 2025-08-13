@@ -137,7 +137,9 @@ def get_datashape_request(datashape_pid: uuid.UUID) -> dict[str, Any]:
     return resp.json()
 
 
-def patch_datashape(datashape_pid: uuid.UUID, datashape: DataShape) -> requests.Response:
+def patch_datashape(
+    datashape_pid: uuid.UUID, datashape: DataShape
+) -> requests.Response:
     resp = requests.patch(
         f"{API_URL_PREFIX}/datashape/{datashape_pid}", json=datashape.model_dump()
     )
