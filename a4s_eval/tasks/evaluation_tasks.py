@@ -84,8 +84,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID) -> None:
                     evaluator_count += 1
                     print(f"Running evaluator: {name}")
                     new_metrics = evaluator(
-                        datashape,
-                        evaluation.model.dataset, evaluation.dataset
+                        datashape, evaluation.model.dataset, evaluation.dataset
                     )
                     print(f"Generated {len(new_metrics)} metrics")
                     metrics.extend(new_metrics)
@@ -125,7 +124,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID) -> None:
 
 
 @celery_app.task
-def model_evaluation_task(evaluation_pid: uuid.UUID):
+def model_evaluation_task(evaluation_pid: uuid.UUID) -> None:
     print(f"Starting evaluation task for {evaluation_pid}")
 
     # Debug: Check registry and API configuration
@@ -151,18 +150,20 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
 
         metrics: list[Metric] = []
 
+        datashape = get_project_datashape(evaluation.project.pid)
+
         x_test = evaluation.dataset.data
-        x_test = x_test[[f.name for f in evaluation.dataset.shape.features]].to_numpy()
+        x_test = x_test[[f.name for f in datashape.features]].to_numpy()
         print("Starting time iteration for evaluation...")
 
         # Debug DateIterator parameters
         print("DateIterator parameters:")
         print(f"   - window_size: {evaluation.project.window_size}")
         print(f"   - frequency: {evaluation.project.frequency}")
-        print(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
+        # print(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
         print(f"   - data shape: {evaluation.dataset.data.shape}")
         print(
-            f"   - date column sample: {evaluation.dataset.data[evaluation.model.dataset.shape.date.name].head()}"
+            f"   - date column sample: {evaluation.dataset.data[datashape.date.name].head()}"
         )
 
         iteration_count = 0
@@ -180,7 +181,7 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                 window=evaluation.project.window_size,
                 freq=evaluation.project.frequency,
                 df=evaluation.dataset.data,
-                date_feature=evaluation.model.dataset.shape.date.name,
+                date_feature=datashape.date.name,
             )
             print("DateIterator created successfully")
 
@@ -198,7 +199,10 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                     evaluator_count += 1
                     print(f"Running evaluator: {name}")
                     new_metrics = evaluator(
-                        evaluation.model, evaluation.dataset, y_curr_pred_proba
+                        datashape,
+                        evaluation.model,
+                        evaluation.dataset,
+                        y_curr_pred_proba,
                     )
                     print(f"Generated {len(new_metrics)} metrics")
                     metrics.extend(new_metrics)

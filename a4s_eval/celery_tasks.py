@@ -29,8 +29,8 @@ def poll_and_run_evaluation() -> None:
     groups = [
         group(
             [
-                dataset_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
-                # model_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
+                # dataset_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
+                model_evaluation_task.s(eval_id).on_error(handle_error.s(eval_id)),
             ]
         )
         for eval_id in eval_ids
