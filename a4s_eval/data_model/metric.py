@@ -16,7 +16,7 @@ class Metric(BaseModel):
 
     name: str  # Name of the metric (e.g., 'accuracy', 'f1_score', 'drift')
     score: float  # Numerical value of the metric
-    time: datetime # Timestamp when the metric was computed
+    time: datetime  # Timestamp when the metric was computed
 
     feature_pid: uuid.UUID | None = None
 
