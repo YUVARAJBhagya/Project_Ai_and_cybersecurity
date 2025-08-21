@@ -82,7 +82,11 @@ def y_pred_proba(ref_model: Model, test_dataset: Dataset) -> np.ndarray:
 
 
 def test_smoke(
-    data_shape:DataShape,ref_model: Model, test_dataset: Dataset, y_pred_proba: np.ndarray) -> None:
+    data_shape: DataShape,
+    ref_model: Model,
+    test_dataset: Dataset,
+    y_pred_proba: np.ndarray,
+) -> None:
     metrics = empty_model_evaluator(data_shape, ref_model, test_dataset, y_pred_proba)
     assert len(metrics) == 0
 
@@ -168,7 +172,9 @@ def test_model_roc_auc_evaluation(
     test_dataset: Dataset,
     y_pred_proba: np.ndarray,
 ):
-    metrics = classification_roc_auc_evaluator(data_shape,ref_model, test_dataset, y_pred_proba)
+    metrics = classification_roc_auc_evaluator(
+        data_shape, ref_model, test_dataset, y_pred_proba
+    )
     assert len(metrics) == 1
     assert metrics[0].name == "ROCAUC"
     assert isinstance(metrics[0].score, float)
