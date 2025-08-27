@@ -114,25 +114,21 @@ def data_drift_evaluator(
 
     metrics = []
 
-    # Get feature name / feature type dictionary from expected datashape
-    expected_feature_name_type_dict = {
-        _feature.name: _feature.feature_type for _feature in datashape.features
+    # Get feature name / feature pid mapping from test dataset
+    test_feature_name_pid_mapping = {
+        _feature.name: _feature.pid for _feature in evaluated.shape.features
     }
 
     # Loop through all features in the project expected datashape
-    for feature in evaluated.shape.features:
-        if feature.name == date_feature:
-            continue
-
-        # Get feature type from expected datashape if exists otherwise use feature type from test dataset
-        feature_type = expected_feature_name_type_dict.get(
-            feature.name, feature.feature_type
-        )
+    for feature in datashape.features:
+        feature_type = feature.feature_type
         x_ref_feature = reference.data[feature.name]
         x_new_feature = evaluated.data[feature.name]
 
         metric = feature_drift_test(x_ref_feature, x_new_feature, feature_type, date)
-        metric.feature_pid = feature.pid
+
+        # Set correct feature pid (from test dataset)
+        metric.feature_pid = test_feature_name_pid_mapping.get(feature.name, None)
         metrics.append(metric)
 
     return metrics
