@@ -114,7 +114,7 @@ def data_drift_evaluator(
 
     metrics = []
 
-    for feature in evaluated.shape.features:
+    for feature in datashape.features:
         if feature.name == date_feature:
             continue
 
