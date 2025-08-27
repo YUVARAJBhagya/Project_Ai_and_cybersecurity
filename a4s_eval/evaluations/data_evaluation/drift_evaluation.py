@@ -114,11 +114,16 @@ def data_drift_evaluator(
 
     metrics = []
 
-    for feature in datashape.features:
+    # Get expected feature type dictionary with name
+    expected_feature_name_type_dict = {_feature.name: _feature.feature_type for _feature in datashape.features}
+
+    # Loop through all features in the project expected datashape
+    for feature in evaluated.shape.features:
         if feature.name == date_feature:
             continue
 
-        feature_type = feature.feature_type
+        # Get feature type from expected datashape if exists otherwise use feature type from test dataset
+        feature_type = expected_feature_name_type_dict.get(feature.name, feature.feature_type)
         x_ref_feature = reference.data[feature.name]
         x_new_feature = evaluated.data[feature.name]
 
