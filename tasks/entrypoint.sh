@@ -25,31 +25,6 @@ construct_redis_url() {
     fi
 }
 
-# Function to construct RabbitMQ URL
-construct_mq_url() {
-    local mq_username="${MQ_USERNAME:-guest}"
-    local mq_use_ssl="${MQ_USE_SSL:-false}"
-    
-    if [ "$mq_use_ssl" = "true" ] && [ -n "$MQ_AMQPS_ENDPOINT" ]; then
-        local endpoint="$MQ_AMQPS_ENDPOINT"
-        local protocol="amqps"
-        local port="5671"
-    else
-        local endpoint="${MQ_AMQP_ENDPOINT:-amqp://localhost:5672}"
-        local protocol="amqp"
-        local port="5672"
-    fi
-    
-    # Extract host from endpoint
-    local mq_host=$(echo "$endpoint" | sed -E 's/^[a-z]+:\/\/([^:\/]+).*/\1/')
-    
-    if [ -n "$MQ_PASSWORD" ]; then
-        export CELERY_BROKER_URL="${protocol}://${mq_username}:${MQ_PASSWORD}@${mq_host}:${port}//"
-    else
-        export CELERY_BROKER_URL="${protocol}://${mq_username}@${mq_host}:${port}//"
-    fi
-}
-
 # Function to wait for dependencies
 wait_for_dependencies() {
     # Wait for Redis
@@ -64,8 +39,8 @@ wait_for_dependencies() {
     local mq_host=$(echo "${MQ_AMQP_ENDPOINT:-localhost}" | sed -E 's/^[a-z]+:\/\/([^:\/]+).*/\1/')
     if [ -n "$mq_host" ]; then
         echo "Waiting for RabbitMQ at $mq_host..."
-        timeout 30 bash -c "until nc -z $mq_host 5672; do sleep 1; done" || {
-            echo "RabbitMQ not reachable at $mq_host:5672"
+        timeout 30 bash -c "until nc -z $mq_host 5671; do sleep 1; done" || {
+            echo "RabbitMQ not reachable at $mq_host:5671"
         }
     fi
 }
@@ -102,7 +77,6 @@ start_combined() {
 main() {
     # Construct connection URLs
     construct_redis_url
-    construct_mq_url
     
     # Wait for dependencies
     wait_for_dependencies
