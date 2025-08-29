@@ -2,9 +2,9 @@ import uuid
 from io import BytesIO
 from typing import Any
 
+import onnxruntime as ort
 import pandas as pd
 import requests
-import onnxruntime as ort
 from pydantic import BaseModel
 
 from a4s_eval.data_model.evaluation import DataShape, Evaluation
@@ -105,7 +105,7 @@ def mark_failed(evaluation_pid: uuid.UUID) -> None:
     return requests.put(f"{API_URL_PREFIX}/evaluations/{evaluation_pid}", json=payload)
 
 
-def get_dataset_data(dataset_pid: str) -> pd.DataFrame:
+def get_dataset_data(dataset_pid: uuid.UUID) -> pd.DataFrame:
     resp = requests.get(f"{API_URL_PREFIX}/datasets/{dataset_pid}/data", stream=True)
     resp.raise_for_status()
     content_type = resp.headers.get("Content-Type", "")
@@ -190,11 +190,10 @@ def get_datashape_request(datashape_pid: uuid.UUID) -> dict[str, Any]:
     return resp.json()
 
 
-def patch_datashape(
-    datashape_pid: uuid.UUID, datashape: DataShape
-) -> requests.Response:
+def patch_datashape(dataset_pid: uuid.UUID, datashape: DataShape) -> requests.Response:
     resp = requests.patch(
-        f"{API_URL_PREFIX}/datashape/{datashape_pid}", json=datashape.model_dump()
+        f"{API_URL_PREFIX}/datasets/{dataset_pid}/datashape",
+        json=datashape.model_dump(),
     )
     resp.raise_for_status()
     return resp
@@ -202,7 +201,13 @@ def patch_datashape(
 
 def patch_datashape_status(datashape_pid: uuid.UUID, status: str) -> requests.Response:
     resp = requests.patch(
-        f"{API_URL_PREFIX}/datashape/{datashape_pid}/status?status={status}",
+        f"{API_URL_PREFIX}/datashapes/{datashape_pid}/status?status={status}",
     )
     resp.raise_for_status()
     return resp
+
+
+def get_project_datashape(project_pid: uuid.UUID) -> DataShape:
+    resp = requests.get(f"{API_URL_PREFIX}/projects/{project_pid}/datashape")
+    resp.raise_for_status()
+    return DataShape.model_validate(resp.json())

@@ -1,4 +1,5 @@
 import uuid
+
 import numpy as np
 
 from a4s_eval.celery_app import celery_app
@@ -9,8 +10,9 @@ from a4s_eval.evaluations.model_evaluation.registry import (
 )
 from a4s_eval.service.api_client import (
     get_dataset_data,
-    get_onnx_model,
     get_evaluation,
+    get_onnx_model,
+    get_project_datashape,
     post_metrics,
     mark_failed,
     mark_completed,
@@ -23,7 +25,7 @@ logger = get_logger()
 
 
 @celery_app.task
-def dataset_evaluation_task(evaluation_pid: uuid.UUID):
+def dataset_evaluation_task(evaluation_pid: uuid.UUID) -> None:
     logger.debug(f"Starting evaluation task for {evaluation_pid}")
 
     # Debug: Check registry and API configuration
@@ -65,13 +67,15 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
         iteration_count = 0
         evaluator_count = 0  # Initialize here to avoid UnboundLocalError
 
+        datashape = get_project_datashape(evaluation.project.pid)
+
         try:
             date_iterator = DateIterator(
                 date_round="1 D",
                 window=evaluation.project.window_size,
                 freq=evaluation.project.frequency,
                 df=evaluation.dataset.data,
-                date_feature=evaluation.model.dataset.shape.date.name,
+                date_feature=datashape.date.name,
             )
             logger.debug("DateIterator created successfully")
 
@@ -87,7 +91,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
                     evaluator_count += 1
                     logger.debug(f"Running evaluator: {name}")
                     new_metrics = evaluator(
-                        evaluation.model.dataset, evaluation.dataset
+                        datashape, evaluation.model.dataset, evaluation.dataset
                     )
                     logger.debug(f"Generated {len(new_metrics)} metrics")
                     metrics.extend(new_metrics)
@@ -136,7 +140,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID):
 
 
 @celery_app.task
-def model_evaluation_task(evaluation_pid: uuid.UUID):
+def model_evaluation_task(evaluation_pid: uuid.UUID) -> None:
     print(f"Starting evaluation task for {evaluation_pid}")
 
     # Debug: Check registry and API configuration
@@ -162,18 +166,20 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
 
         metrics: list[Metric] = []
 
+        datashape = get_project_datashape(evaluation.project.pid)
+
         x_test = evaluation.dataset.data
-        x_test = x_test[[f.name for f in evaluation.dataset.shape.features]].to_numpy()
+        x_test = x_test[[f.name for f in datashape.features]].to_numpy()
         print("Starting time iteration for evaluation...")
 
         # Debug DateIterator parameters
         print("DateIterator parameters:")
         print(f"   - window_size: {evaluation.project.window_size}")
         print(f"   - frequency: {evaluation.project.frequency}")
-        print(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
+        # print(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
         print(f"   - data shape: {evaluation.dataset.data.shape}")
         print(
-            f"   - date column sample: {evaluation.dataset.data[evaluation.model.dataset.shape.date.name].head()}"
+            f"   - date column sample: {evaluation.dataset.data[datashape.date.name].head()}"
         )
 
         iteration_count = 0
@@ -191,7 +197,7 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                 window=evaluation.project.window_size,
                 freq=evaluation.project.frequency,
                 df=evaluation.dataset.data,
-                date_feature=evaluation.model.dataset.shape.date.name,
+                date_feature=datashape.date.name,
             )
             print("DateIterator created successfully")
 
@@ -209,7 +215,10 @@ def model_evaluation_task(evaluation_pid: uuid.UUID):
                     evaluator_count += 1
                     print(f"Running evaluator: {name}")
                     new_metrics = evaluator(
-                        evaluation.model, evaluation.dataset, y_curr_pred_proba
+                        datashape,
+                        evaluation.model,
+                        evaluation.dataset,
+                        y_curr_pred_proba,
                     )
                     print(f"Generated {len(new_metrics)} metrics")
                     metrics.extend(new_metrics)

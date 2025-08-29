@@ -2,7 +2,7 @@ import pandas as pd
 from scipy.spatial.distance import jensenshannon
 from scipy.stats import wasserstein_distance
 
-from a4s_eval.data_model.evaluation import Dataset, FeatureType
+from a4s_eval.data_model.evaluation import Dataset, DataShape, FeatureType
 from a4s_eval.data_model.metric import Metric
 from a4s_eval.evaluations.data_evaluation.registry import data_evaluator
 from a4s_eval.utils.logging import get_logger
@@ -11,7 +11,9 @@ logger = get_logger()
 
 
 @data_evaluator(name="Empty data evaluator")
-def empty_data_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]:
+def empty_data_evaluator(
+    datashape: DataShape, reference: Dataset, evaluated: Dataset
+) -> list[Metric]:
     return []
 
 
@@ -113,7 +115,9 @@ def feature_drift_test(
 
 
 @data_evaluator(name="Data drift")
-def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]:
+def data_drift_evaluator(
+    datashape: DataShape, reference: Dataset, evaluated: Dataset
+) -> list[Metric]:
     """Calculate drift for all features between reference and evaluated datasets.
 
     This evaluator compares the reference dataset against the evaluated dataset
@@ -132,13 +136,20 @@ def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]
     )
 
     # Get the current date from the evaluated dataset
-    date = pd.to_datetime(evaluated.data[reference.shape.date.name]).max()
+    date_feature = datashape.date.name
+    date = pd.to_datetime(evaluated.data[date_feature]).max()
     logger.debug(f"Evaluation date: {date}")
 
     metrics = []
     logger.debug(f"Processing {len(reference.shape.features)} features")
 
-    for feature in reference.shape.features:
+    # Get feature name / feature pid mapping from test dataset
+    test_feature_name_pid_mapping = {
+        _feature.name: _feature.pid for _feature in evaluated.shape.features
+    }
+
+    # Loop through all features in the project expected datashape
+    for feature in datashape.features:
         logger.debug(
             f"Processing feature: {feature.name} (type: {feature.feature_type})"
         )
@@ -147,7 +158,9 @@ def data_drift_evaluator(reference: Dataset, evaluated: Dataset) -> list[Metric]
         x_new_feature = evaluated.data[feature.name]
 
         metric = feature_drift_test(x_ref_feature, x_new_feature, feature_type, date)
-        metric.feature_pid = feature.pid
+
+        # Set correct feature pid (from test dataset)
+        metric.feature_pid = test_feature_name_pid_mapping.get(feature.name, None)
         metrics.append(metric)
         logger.debug(
             f"Added metric for feature {feature.name}: {metric.name} = {metric.score}"
