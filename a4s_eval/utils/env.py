@@ -68,45 +68,12 @@ def get_redis_backend_url() -> str:
 REDIS_BACKEND_URL = get_redis_backend_url()
 
 
-# Celery Broker URL - construct from environment variables or use default
-
-
-def get_fixed_url(broker_url: str) -> str:
-    try:
-        from urllib.parse import urlparse, urlunparse
-
-        parsed = urlparse(broker_url)
-        if parsed.password:
-            # Re-encode the password properly
-            encoded_password = quote(parsed.password, safe="")
-            # Reconstruct the URL with properly encoded password
-            netloc = f"{parsed.username}:{encoded_password}@{parsed.hostname}"
-            if parsed.port:
-                netloc += f":{parsed.port}"
-            fixed_url = urlunparse(
-                (
-                    parsed.scheme,
-                    netloc,
-                    parsed.path,
-                    parsed.params,
-                    parsed.query,
-                    parsed.fragment,
-                )
-            )
-            return fixed_url
-    except Exception as e:
-        logger.warning(
-            f"Failed to fix CELERY_BROKER_URL encoding: {e}, constructing from components"
-        )
-
-
 def get_celery_broker_url():
     """Construct Celery broker URL from environment variables."""
     # Try to get the direct URL first
     broker_url = os.getenv("CELERY_BROKER_URL")
     if broker_url:
-        # We are not suppose to fix a broken url, user should send valid url
-        return get_fixed_url(broker_url)
+        return broker_url
 
     # Construct from separate environment variables
     mq_host = os.getenv("MQ_HOST", "rabbitmq")
