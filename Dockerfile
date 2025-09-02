@@ -75,9 +75,6 @@ RUN mkdir -p /app/data /app/logs && \
 # Switch to non-root user
 USER appuser
 
-# Expose evaluation service port
-EXPOSE 8001
-
 # Make startup scripts executable
 RUN chmod +x /app/tasks/entrypoint.sh
 
