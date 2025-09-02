@@ -50,11 +50,7 @@ def get_redis_backend_url() -> str:
         return redis_handle_ssl_option(redis_url)
 
     # For AWS, construct from individual components
-    redis_host = os.getenv("REDIS_HOST")
-
-    if not redis_host:
-        return "redis://redis:6379/1"
-
+    redis_host = os.getenv("REDIS_HOST", "redis")
 
     redis_port = os.getenv("REDIS_PORT", "6379")
     redis_ssl = os.getenv("REDIS_SSL", "false").lower() == "true"
@@ -69,85 +65,69 @@ def get_redis_backend_url() -> str:
     return redis_handle_ssl_option(redis_url)
 
 
-
 REDIS_BACKEND_URL = get_redis_backend_url()
 
 
 # Celery Broker URL - construct from environment variables or use default
+
+
+def get_fixed_url(broker_url: str) -> str:
+    try:
+        from urllib.parse import urlparse, urlunparse
+
+        parsed = urlparse(broker_url)
+        if parsed.password:
+            # Re-encode the password properly
+            encoded_password = quote(parsed.password, safe="")
+            # Reconstruct the URL with properly encoded password
+            netloc = f"{parsed.username}:{encoded_password}@{parsed.hostname}"
+            if parsed.port:
+                netloc += f":{parsed.port}"
+            fixed_url = urlunparse(
+                (
+                    parsed.scheme,
+                    netloc,
+                    parsed.path,
+                    parsed.params,
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
+            return fixed_url
+    except Exception as e:
+        logger.warning(
+            f"Failed to fix CELERY_BROKER_URL encoding: {e}, constructing from components"
+        )
+
+
 def get_celery_broker_url():
     """Construct Celery broker URL from environment variables."""
     # Try to get the direct URL first
     broker_url = os.getenv("CELERY_BROKER_URL")
     if broker_url:
-        try:
-            from urllib.parse import urlparse, urlunparse
-
-            parsed = urlparse(broker_url)
-            if parsed.password:
-                # Re-encode the password properly
-                encoded_password = quote(parsed.password, safe="")
-                # Reconstruct the URL with properly encoded password
-                netloc = f"{parsed.username}:{encoded_password}@{parsed.hostname}"
-                if parsed.port:
-                    netloc += f":{parsed.port}"
-                fixed_url = urlunparse(
-                    (
-                        parsed.scheme,
-                        netloc,
-                        parsed.path,
-                        parsed.params,
-                        parsed.query,
-                        parsed.fragment,
-                    )
-                )
-                return fixed_url
-        except Exception as e:
-            logger.warning(
-                f"Failed to fix CELERY_BROKER_URL encoding: {e}, constructing from components"
-            )
+        # We are not suppose to fix a broken url, user should send valid url
+        return get_fixed_url(broker_url)
 
     # Construct from separate environment variables
-    mq_username = os.getenv("MQ_USERNAME", "guest")
-    mq_password = os.getenv("MQ_PASSWORD", "guest")
-    mq_amqps_endpoint = os.getenv("MQ_AMQPS_ENDPOINT")
-    mq_amqp_endpoint = os.getenv("MQ_AMQP_ENDPOINT")
-    mq_use_ssl = os.getenv("MQ_USE_SSL", "false").lower() == "true"
+    mq_host = os.getenv("MQ_HOST", "rabbitmq")
+    mq_username = os.getenv("MQ_USERNAME", "")
+    mq_password = os.getenv("MQ_PASSWORD", "")
+    mq_use_ssl = handle_bool_var(os.getenv("MQ_USE_SSL", "false"))
+    mq_port = os.getenv("MQ_PORT", "5671")
+    encoded_password = quote(mq_password)
 
-    # URL encode the password to handle special characters
-    encoded_password = quote(mq_password) if mq_password else "guest"
+    url_prexix = "ampqs://" if mq_use_ssl else "ampq://"
 
-    # Choose endpoint based on SSL preference or what's available
-    if mq_use_ssl and mq_amqps_endpoint:
-        endpoint = mq_amqps_endpoint.replace("amqps://", "")  # Remove scheme if present
-        if ":" in endpoint:
-            hostname, port = endpoint.split(":", 1)
-            result = f"amqps://{mq_username}:{encoded_password}@{hostname}:{port}"
-        else:
-            result = f"amqps://{mq_username}:{encoded_password}@{endpoint}:5671"
-        return result
-    elif mq_amqp_endpoint:
-        if mq_amqp_endpoint.startswith("amqps://"):
-            # This is actually an AMQPS endpoint
-            endpoint = mq_amqp_endpoint.replace("amqps://", "")
-            if ":" in endpoint:
-                hostname, port = endpoint.split(":", 1)
-                result = f"amqps://{mq_username}:{encoded_password}@{hostname}:{port}"
-            else:
-                result = f"amqps://{mq_username}:{encoded_password}@{endpoint}:5671"
-            return result
-        else:
-            # This is a regular AMQP endpoint
-            endpoint = mq_amqp_endpoint.replace("amqp://", "")
-            if ":" in endpoint:
-                hostname, port = endpoint.split(":", 1)
-                result = f"amqp://{mq_username}:{encoded_password}@{hostname}:{port}"
-            else:
-                result = f"amqp://{mq_username}:{encoded_password}@{endpoint}:5672"
-            return result
-    else:
-        # Default for development
-        logger.debug("No MQ endpoints found, using default localhost")
-        return "amqp://guest:guest@localhost:5672//"
+    url_login = mq_username
+    if encoded_password:
+        url_login += f":{encoded_password}"
+    if url_login:
+        url_login += "@"
+    url_port = f":{mq_port}" if mq_port else ""
+
+    url = f"{url_prexix}{url_login}{mq_host}{url_port}"
+
+    return url
 
 
 CELERY_BROKER_URL = get_celery_broker_url()
