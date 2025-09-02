@@ -1,5 +1,5 @@
+from ...evaluators.data_evaluator import data_evaluator_registry
 from . import drift_evaluation
-from .registry import data_evaluator_registry
 
 __all__ = [
     "drift_evaluation",

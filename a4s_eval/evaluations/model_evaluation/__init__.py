@@ -1,5 +1,5 @@
+from ...evaluators.model_evaluator import model_pred_proba_evaluator_registry
 from . import perf_evaluation
-from .registry import model_pred_proba_evaluator_registry
 
 __all__ = [
     "perf_evaluation",
