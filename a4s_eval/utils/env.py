@@ -7,56 +7,67 @@ variables.
 
 import os
 from urllib.parse import quote
+
+from httpx import get
+from numpy import true_divide
+
 from a4s_eval.utils.logging import get_logger
 
 logger = get_logger()
+
+
+def handle_bool_var(envvar: str) -> bool:
+    return str(envvar).lower() == "true"
+
 
 API_URL = os.getenv("API_URL", "http://a4s-api:8000")
 API_PREFIX = os.getenv("API_PREFIX", "/api/v1")
 API_URL_PREFIX = f"{API_URL}{API_PREFIX}"
 CACHE_DIR = os.getenv("CACHE_DIR", "/tmp/cache")
 
+REDIS_SSL_CERT_REQS = handle_bool_var(os.getenv("REDIS_SSL_CERT_REQS", "true"))
+
+
+def redis_handle_ssl_option(redis_url: str) -> str:
+    # Only apply to ssl redis
+    if not redis_url.startswith("rediss://"):
+        return redis_url
+
+    if not REDIS_SSL_CERT_REQS and ("ssl_cert_reqs" not in redis_url):
+        separator = "&" if "?" in redis_url else "?"
+        return f"{redis_url}{separator}ssl_cert_reqs=none"
+
+    return redis_url
+
 
 # Redis configuration
-def get_redis_backend_url():
+def get_redis_backend_url() -> str:
     """Construct Redis backend URL for Celery from environment variables."""
     # Check if REDIS_BACKEND_URL is provided directly
     redis_url = os.getenv("REDIS_BACKEND_URL")
     if redis_url:
         # Fix SSL configuration if needed
-        if redis_url.startswith("rediss://") and "ssl_cert_reqs" not in redis_url:
-            # Add SSL certificate requirements parameter
-            separator = "&" if "?" in redis_url else "?"
-            redis_url = f"{redis_url}{separator}ssl_cert_reqs=none"
-        return redis_url
+        return redis_handle_ssl_option(redis_url)
 
     # For AWS, construct from individual components
     redis_host = os.getenv("REDIS_HOST")
+
+    if not redis_host:
+        return "redis://redis:6379/1"
+
+
     redis_port = os.getenv("REDIS_PORT", "6379")
     redis_ssl = os.getenv("REDIS_SSL", "false").lower() == "true"
-    redis_auth_enabled = os.getenv("REDIS_AUTH_ENABLED", "false").lower() == "true"
     redis_auth_token = os.getenv("REDIS_AUTH_TOKEN", "")
+    redis_auth_token_url = ""
+    if redis_auth_token:
+        redis_auth_token_url = f":{redis_auth_token}@"
 
-    if redis_host:
-        if redis_ssl:
-            # For SSL Redis, we need to add ssl_cert_reqs parameter for Celery
-            scheme = "rediss"
-            ssl_params = "?ssl_cert_reqs=none"
+    scheme = "rediss" if redis_ssl else "redis"
 
-            if redis_auth_enabled and redis_auth_token:
-                return f"{scheme}://:{redis_auth_token}@{redis_host}:{redis_port}/1{ssl_params}"
-            else:
-                return f"{scheme}://{redis_host}:{redis_port}/1{ssl_params}"
-        else:
-            # Non-SSL Redis
-            scheme = "redis"
-            if redis_auth_enabled and redis_auth_token:
-                return f"{scheme}://:{redis_auth_token}@{redis_host}:{redis_port}/1"
-            else:
-                return f"{scheme}://{redis_host}:{redis_port}/1"
+    redis_url = f"{scheme}://{redis_auth_token_url}{redis_host}:{redis_port}/1"
+    return redis_handle_ssl_option(redis_url)
 
-    # Fallback to default for local development
-    return "redis://redis:6379/1"
 
 
 REDIS_BACKEND_URL = get_redis_backend_url()
