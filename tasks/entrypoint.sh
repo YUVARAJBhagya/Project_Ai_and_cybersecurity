@@ -5,26 +5,6 @@
 
 set -e
 
-# Function to construct Redis URL
-construct_redis_url() {
-    local redis_host="${REDIS_HOST:-localhost}"
-    local redis_port="${REDIS_PORT:-6379}"
-    local redis_ssl="${REDIS_SSL:-false}"
-    local redis_auth_enabled="${REDIS_AUTH_ENABLED:-false}"
-    
-    if [ "$redis_ssl" = "true" ]; then
-        local protocol="rediss"
-    else
-        local protocol="redis"
-    fi
-    
-    if [ "$redis_auth_enabled" = "true" ] && [ -n "$REDIS_AUTH_TOKEN" ]; then
-        export REDIS_BACKEND_URL="${protocol}://:${REDIS_AUTH_TOKEN}@${redis_host}:${redis_port}/0"
-    else
-        export REDIS_BACKEND_URL="${protocol}://${redis_host}:${redis_port}/0"
-    fi
-}
-
 # Function to wait for dependencies
 wait_for_dependencies() {
     # Wait for Redis
@@ -75,9 +55,6 @@ start_combined() {
 
 # Main function
 main() {
-    # Construct connection URLs
-    construct_redis_url
-    
     # Wait for dependencies
     wait_for_dependencies
     
