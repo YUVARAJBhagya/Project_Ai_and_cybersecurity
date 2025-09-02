@@ -54,20 +54,20 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID) -> None:
         x_test = evaluation.dataset.data
         logger.debug("Starting time iteration for evaluation...")
 
+        datashape = get_project_datashape(evaluation.project.pid)
+
         # Debug DateIterator parameters
         logger.debug("DateIterator parameters:")
         logger.debug(f"   - window_size: {evaluation.project.window_size}")
         logger.debug(f"   - frequency: {evaluation.project.frequency}")
-        logger.debug(f"   - date_feature: {evaluation.model.dataset.shape.date.name}")
+        logger.debug(f"   - date_feature: {datashape.date.name}")
         logger.debug(f"   - data shape: {evaluation.dataset.data.shape}")
         logger.debug(
-            f"   - date column sample: {evaluation.dataset.data[evaluation.model.dataset.shape.date.name].head()}"
+            f"   - date column sample: {evaluation.dataset.data[datashape.date.name].head()}"
         )
 
         iteration_count = 0
         evaluator_count = 0  # Initialize here to avoid UnboundLocalError
-
-        datashape = get_project_datashape(evaluation.project.pid)
 
         try:
             date_iterator = DateIterator(
