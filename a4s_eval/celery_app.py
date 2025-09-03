@@ -29,6 +29,7 @@ celery_config = {
         "TCP_KEEPINTVL": 3,
         "TCP_KEEPCNT": 5,
     },
+    "worker_hijack_root_logger": False,
 }
 
 # Only add SSL configuration in production
