@@ -24,6 +24,8 @@ CACHE_DIR = os.getenv("CACHE_DIR", "/tmp/cache")
 
 REDIS_SSL_CERT_REQS = handle_bool_var(os.getenv("REDIS_SSL_CERT_REQS", "true"))
 
+BROCKER_SSL_CERT_REQS = handle_bool_var(os.getenv("BROCKER_SSL_CERT_REQS", "true"))
+
 
 def redis_handle_ssl_option(redis_url: str) -> str:
     # Only apply to ssl redis
