@@ -82,7 +82,7 @@ def dataset_evaluation_task(evaluation_pid: uuid.UUID) -> None:
             get_logger().error(f"Error posting metrics: {e}")
             raise
 
-        get_logger().info(f"Starting evaluation task for {evaluation_pid}")
+        get_logger().info(f"Tasked complete for {evaluation_pid}")
 
     except Exception as e:
         get_logger().error(f"Error in evaluation task: {e}")
