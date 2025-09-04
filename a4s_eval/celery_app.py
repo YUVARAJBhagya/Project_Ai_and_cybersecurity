@@ -30,10 +30,11 @@ celery_config = {
         "TCP_KEEPCNT": 5,
     },
     "worker_hijack_root_logger": False,
+    "broker_use_ssl": env.MQ_USE_SSL,
 }
 
 # Only add SSL configuration in production
-if env.BROCKER_SSL_CERT_REQS:
+if env.MQ_USE_SSL and env.BROCKER_SSL_CERT_REQS:
     celery_config["broker_transport_options"] = {
         "ssl": {
             "cert_reqs": 0,  # CERT_NONE as integer
