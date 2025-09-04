@@ -94,13 +94,3 @@ def handle_error(evaluation_id, request, exc, traceback) -> None:
 
     mark_failed(evaluation_id)
     print(f"Evaluation {evaluation_id} marked as failed due to error.")
-
-
-# @celery_app.task
-# def test_simple_task() -> str:
-#     """Simple test task to debug Celery"""
-#     logger.debug("=== TEST SIMPLE TASK START ===")
-#     logger.debug("This is a simple test task")
-#     logger.debug("=== TEST SIMPLE TASK END ===")
-
-#     return "Test task completed successfully"
