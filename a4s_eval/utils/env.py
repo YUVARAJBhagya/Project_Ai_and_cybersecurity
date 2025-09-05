@@ -102,8 +102,6 @@ def get_celery_broker_url():
 
     url_port = f":{mq_port}" if mq_port else ""
     url = f"{url_prexix}{url_login}{mq_host}{url_port}"
-    print(mq_use_ssl)
-
     return url
 
 
