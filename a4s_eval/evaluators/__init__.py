@@ -9,7 +9,6 @@ from a4s_eval.evaluators.model_evaluator import model_pred_proba_evaluator_regis
 registries = [data_evaluator_registry, model_pred_proba_evaluator_registry]
 
 
-
 def auto_discover(package: ModuleType):
     """
     Recursively imports all submodules of a given package.
@@ -24,6 +23,7 @@ def auto_discover(package: ModuleType):
 
 
 auto_discover(a4s_eval.evaluations)
+
 
 def get_n_evaluation() -> int:
     return sum([len(r._functions) for r in registries])
