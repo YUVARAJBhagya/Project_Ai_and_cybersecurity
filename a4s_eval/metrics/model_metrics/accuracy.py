@@ -16,19 +16,15 @@ def accuracy(
     functional_model: FunctionalModel,
 ) -> list[Measure]:
     
-    # Both x and y (the features and the target) are contained in dataset.data as a dataframe.
-    # To identify the target (y), use the datashape.target object, which has a name property. Use this property to index the aforementioned dataframe.
-    # To identify the features (x), use the datashape.features list of object. Similarly each object in this list has a name property to index the dataframe.
-    
-    # Inspect FunctionalModel definition to identify the function to use to compute the model predictions.
-    
-    # Use the y (from the dataset.data) and the prediction to cumpute the accuracy.
-    
-    # Below is a placeholder that allows pytest to pass.
-    
-    # If this takes too many resources (e.g., runs very long or causes a memory error), feel free to limit the dataset to the first 10,000 examples.
-    
-    accuracy_value = 0.99
-    
-    current_time = datetime.now()
-    return [Measure(name="accuracy", score=accuracy_value, time=current_time)]
+    #my code
+    feature_columns = [feature.name for feature in datashape.features]#creates the list of names of all features in datashape
+    X = dataset.data[feature_columns]
+
+# Get the actual values and predict the outputs using the model
+    y_true = dataset.data[datashape.target.name]
+    y_predicted = functional_model.predict(X.to_numpy())
+
+    accuracy_score = np.mean(y_true == y_predicted)
+    timestamp = datetime.now()
+
+    return [Measure(name="accuracy", score=accuracy_score, time=timestamp)]
