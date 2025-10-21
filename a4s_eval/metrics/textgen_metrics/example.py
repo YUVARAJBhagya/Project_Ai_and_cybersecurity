@@ -5,7 +5,7 @@ from a4s_eval.metric_registries.textgen_metric_registry import textgen_metric
 from a4s_eval.service.functional_model import TextGenerationModel
 
 
-@textgen_metric(name="Test")
+@textgen_metric(name="textgen_example")
 def my_test_metric(
     datashape: DataShape,
     model: Model,
