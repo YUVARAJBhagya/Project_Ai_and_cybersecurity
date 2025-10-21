@@ -22,6 +22,11 @@ from tests.save_measures_utils import save_measures
 
 
 @pytest.fixture
+def textgen_dataset() -> pd.DataFrame:
+    return pd.read_parquet("./tests/data/squad_val.parquet")
+
+
+@pytest.fixture
 def data_shape() -> DataShape:
     def text_feat(feature_name: str) -> Feature:
         return Feature(
