@@ -45,8 +45,3 @@ def tab_class_train_data(tab_class_dataset: pd.DataFrame) -> pd.DataFrame:
 @pytest.fixture(scope="session")
 def tab_class_test_data(tab_class_dataset: pd.DataFrame) -> pd.DataFrame:
     return sample(get_splits(tab_class_dataset)[1])
-
-
-@pytest.fixture(scope="session")
-def textgen_dataset() -> pd.DataFrame:
-    return pd.read_parquet("./tests/data/squad_val.parquet")
