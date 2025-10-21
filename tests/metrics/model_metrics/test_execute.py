@@ -1,10 +1,11 @@
 import uuid
 
+from numpy import isin
 import pandas as pd
 from a4s_eval.metric_registries.model_metric_registry import model_metric_registry
 from a4s_eval.metric_registries.model_metric_registry import ModelMetric
-from a4s_eval.service.model_functional import FunctionalModel
-from a4s_eval.service.model_load import load_model
+from a4s_eval.service.functional_model import TabularClassificationModel
+from a4s_eval.service.model_factory import load_model
 import pytest
 
 from a4s_eval.data_model.evaluation import (
@@ -13,6 +14,7 @@ from a4s_eval.data_model.evaluation import (
     Model,
     ModelConfig,
     ModelFramework,
+    ModelTask,
 )
 
 from tests.save_measures_utils import save_measures
@@ -41,15 +43,15 @@ def data_shape() -> DataShape:
 
 
 @pytest.fixture
-def test_dataset(test_data: pd.DataFrame, data_shape: DataShape) -> Dataset:
-    data = test_data
+def test_dataset(tab_class_test_data: pd.DataFrame, data_shape: DataShape) -> Dataset:
+    data = tab_class_test_data
     data["issue_d"] = pd.to_datetime(data["issue_d"])
     return Dataset(pid=uuid.uuid4(), shape=data_shape, data=data)
 
 
 @pytest.fixture
-def ref_dataset(train_data, data_shape: DataShape) -> Dataset:
-    data = train_data
+def ref_dataset(tab_class_train_data, data_shape: DataShape) -> Dataset:
+    data = tab_class_train_data
     data["issue_d"] = pd.to_datetime(data["issue_d"])
     return Dataset(
         pid=uuid.uuid4(),
@@ -68,11 +70,17 @@ def ref_model(ref_dataset: Dataset) -> Model:
 
 
 @pytest.fixture
-def functional_model() -> FunctionalModel:
+def functional_model() -> TabularClassificationModel:
     model_config = ModelConfig(
-        path="./tests/data/lcld_v2_tabtransformer.pt", framework=ModelFramework.TORCH
+        path="./tests/data/lcld_v2_tabtransformer.pt",
+        framework=ModelFramework.TORCH,
+        task=ModelTask.CLASSIFICATION,
     )
-    return load_model(model_config)
+
+    model = load_model(model_config)
+    if not isinstance(model, TabularClassificationModel):
+        raise TypeError
+    return model
 
 
 def test_non_empty_registry():
@@ -85,7 +93,7 @@ def test_data_metric_registry_contains_evaluator(
     data_shape: DataShape,
     ref_model: Model,
     test_dataset: Dataset,
-    functional_model: FunctionalModel,
+    functional_model: TabularClassificationModel,
 ):
     measures = evaluator_function[1](
         data_shape, ref_model, test_dataset, functional_model
