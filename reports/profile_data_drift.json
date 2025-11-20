@@ -1,0 +1,747 @@
+{
+  "metrics": [
+    {
+      "metric": "DatasetDriftMetric",
+      "result": {
+        "drift_share": 0.5,
+        "number_of_columns": 15,
+        "number_of_drifted_columns": 4,
+        "share_of_drifted_columns": 0.26666666666666666,
+        "dataset_drift": false
+      }
+    },
+    {
+      "metric": "DataDriftTable",
+      "result": {
+        "number_of_columns": 15,
+        "number_of_drifted_columns": 4,
+        "share_of_drifted_columns": 0.26666666666666666,
+        "dataset_drift": false,
+        "drift_by_columns": {
+          "age": {
+            "column_name": "age",
+            "column_type": "num",
+            "stattest_name": "K-S p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.06463814850986778,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  0.42,
+                  8.378,
+                  16.336000000000002,
+                  24.294000000000004,
+                  32.252,
+                  40.21,
+                  48.168000000000006,
+                  56.126000000000005,
+                  64.084,
+                  72.042,
+                  80.0
+                ],
+                "y": [
+                  0.008799699824639582,
+                  0.008095723838668413,
+                  0.027807051445861073,
+                  0.029566991410789,
+                  0.021823255565106166,
+                  0.013023555740466571,
+                  0.009855663803596334,
+                  0.004575843908812584,
+                  0.0014079519719423334,
+                  0.0007039759859711667
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  0.83,
+                  7.847,
+                  14.864,
+                  21.881,
+                  28.898,
+                  35.915,
+                  42.932,
+                  49.949,
+                  56.966,
+                  63.983000000000004,
+                  71.0
+                ],
+                "y": [
+                  0.010778146230702626,
+                  0.005189477814782746,
+                  0.02714496087732514,
+                  0.034729582298930695,
+                  0.0255481984727766,
+                  0.017564386450033904,
+                  0.00878219322501696,
+                  0.006387049618194147,
+                  0.003991906011371341,
+                  0.0023951436068228075
+                ]
+              }
+            }
+          },
+          "fare": {
+            "column_name": "fare",
+            "column_type": "num",
+            "stattest_name": "K-S p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.6994013310981964,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  51.23292,
+                  102.46584,
+                  153.69876,
+                  204.93168,
+                  256.1646,
+                  307.39752,
+                  358.63044,
+                  409.86336,
+                  461.09628,
+                  512.3292
+                ],
+                "y": [
+                  0.016061351864327673,
+                  0.0024070145845722676,
+                  0.0005689307199898088,
+                  4.376390153767759e-05,
+                  0.0003063473107637431,
+                  4.376390153767761e-05,
+                  0.0,
+                  0.0,
+                  0.0,
+                  8.752780307535512e-05
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  51.23292,
+                  102.46584,
+                  153.69876,
+                  204.93168,
+                  256.1646,
+                  307.39752,
+                  358.63044,
+                  409.86336,
+                  461.09628,
+                  512.3292
+                ],
+                "y": [
+                  0.01600972029509783,
+                  0.0022369746165753135,
+                  0.0007895204529089344,
+                  4.386224738382967e-05,
+                  0.00017544898953531868,
+                  0.00021931123691914847,
+                  0.0,
+                  0.0,
+                  0.0,
+                  4.386224738382965e-05
+                ]
+              }
+            }
+          },
+          "parch": {
+            "column_name": "parch",
+            "column_type": "num",
+            "stattest_name": "K-S p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.999999956725071,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.6,
+                  1.2,
+                  1.7999999999999998,
+                  2.4,
+                  3.0,
+                  3.5999999999999996,
+                  4.2,
+                  4.8,
+                  5.3999999999999995,
+                  6.0
+                ],
+                "y": [
+                  1.2780269058295963,
+                  0.2242152466367713,
+                  0.0,
+                  0.13452914798206275,
+                  0.0,
+                  0.011210762331838571,
+                  0.0037369207772795184,
+                  0.0,
+                  0.011210762331838571,
+                  0.0037369207772795184
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.5,
+                  1.0,
+                  1.5,
+                  2.0,
+                  2.5,
+                  3.0,
+                  3.5,
+                  4.0,
+                  4.5,
+                  5.0
+                ],
+                "y": [
+                  1.510112359550562,
+                  0.0,
+                  0.2606741573033708,
+                  0.0,
+                  0.19775280898876405,
+                  0.0,
+                  0.008988764044943821,
+                  0.0,
+                  0.01348314606741573,
+                  0.008988764044943821
+                ]
+              }
+            }
+          },
+          "pclass": {
+            "column_name": "pclass",
+            "column_type": "num",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.07366696653361084,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  1.0,
+                  1.2,
+                  1.4,
+                  1.6,
+                  1.8,
+                  2.0,
+                  2.2,
+                  2.4000000000000004,
+                  2.6,
+                  2.8,
+                  3.0
+                ],
+                "y": [
+                  1.322869955156951,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.9865470852017928,
+                  0.0,
+                  0.0,
+                  0.0,
+                  2.690582959641253
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  1.0,
+                  1.2,
+                  1.4,
+                  1.6,
+                  1.8,
+                  2.0,
+                  2.2,
+                  2.4000000000000004,
+                  2.6,
+                  2.8,
+                  3.0
+                ],
+                "y": [
+                  1.1011235955056182,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0786516853932575,
+                  0.0,
+                  0.0,
+                  0.0,
+                  2.820224719101121
+                ]
+              }
+            }
+          },
+          "sibsp": {
+            "column_name": "sibsp",
+            "column_type": "num",
+            "stattest_name": "K-S p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.6634975715438095,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.8,
+                  1.6,
+                  2.4000000000000004,
+                  3.2,
+                  4.0,
+                  4.800000000000001,
+                  5.6000000000000005,
+                  6.4,
+                  7.2,
+                  8.0
+                ],
+                "y": [
+                  0.882847533632287,
+                  0.2830717488789238,
+                  0.036434977578475324,
+                  0.01401345291479821,
+                  0.0,
+                  0.019618834080717473,
+                  0.005605381165919283,
+                  0.0,
+                  0.0,
+                  0.008408071748878925
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.8,
+                  1.6,
+                  2.4000000000000004,
+                  3.2,
+                  4.0,
+                  4.800000000000001,
+                  5.6000000000000005,
+                  6.4,
+                  7.2,
+                  8.0
+                ],
+                "y": [
+                  0.8230337078651685,
+                  0.30337078651685395,
+                  0.04213483146067414,
+                  0.03089887640449439,
+                  0.0,
+                  0.030898876404494353,
+                  0.008426966292134833,
+                  0.0,
+                  0.0,
+                  0.011235955056179777
+                ]
+              }
+            }
+          },
+          "survived": {
+            "column_name": "survived",
+            "column_type": "num",
+            "stattest_name": "Z-test p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.6601064964228041,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.1,
+                  0.2,
+                  0.30000000000000004,
+                  0.4,
+                  0.5,
+                  0.6000000000000001,
+                  0.7000000000000001,
+                  0.8,
+                  0.9,
+                  1.0
+                ],
+                "y": [
+                  6.233183856502242,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  3.766816143497759
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  0.0,
+                  0.1,
+                  0.2,
+                  0.30000000000000004,
+                  0.4,
+                  0.5,
+                  0.6000000000000001,
+                  0.7000000000000001,
+                  0.8,
+                  0.9,
+                  1.0
+                ],
+                "y": [
+                  6.089887640449438,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  3.910112359550563
+                ]
+              }
+            }
+          },
+          "adult_male": {
+            "column_name": "adult_male",
+            "column_type": "cat",
+            "stattest_name": "Z-test p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.03742804129123223,
+            "drift_detected": true,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  false,
+                  true
+                ],
+                "y": [
+                  162,
+                  284
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  false,
+                  true
+                ],
+                "y": [
+                  192,
+                  253
+                ]
+              }
+            }
+          },
+          "alive": {
+            "column_name": "alive",
+            "column_type": "cat",
+            "stattest_name": "Z-test p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.6601064964228041,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "no",
+                  "yes"
+                ],
+                "y": [
+                  278,
+                  168
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "no",
+                  "yes"
+                ],
+                "y": [
+                  271,
+                  174
+                ]
+              }
+            }
+          },
+          "alone": {
+            "column_name": "alone",
+            "column_type": "cat",
+            "stattest_name": "Z-test p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.07072867064494215,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  false,
+                  true
+                ],
+                "y": [
+                  164,
+                  282
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  false,
+                  true
+                ],
+                "y": [
+                  190,
+                  255
+                ]
+              }
+            }
+          },
+          "class": {
+            "column_name": "class",
+            "column_type": "cat",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.07366696653361084,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "First",
+                  "Second",
+                  "Third"
+                ],
+                "y": [
+                  118,
+                  88,
+                  240
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "First",
+                  "Second",
+                  "Third"
+                ],
+                "y": [
+                  98,
+                  96,
+                  251
+                ]
+              }
+            }
+          },
+          "deck": {
+            "column_name": "deck",
+            "column_type": "cat",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.002819329101694413,
+            "drift_detected": true,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E",
+                  "F",
+                  "G"
+                ],
+                "y": [
+                  9,
+                  30,
+                  25,
+                  19,
+                  19,
+                  5,
+                  0
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E",
+                  "F",
+                  "G"
+                ],
+                "y": [
+                  6,
+                  17,
+                  34,
+                  14,
+                  13,
+                  8,
+                  4
+                ]
+              }
+            }
+          },
+          "embark_town": {
+            "column_name": "embark_town",
+            "column_type": "cat",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.30565844418727445,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "Cherbourg",
+                  "Queenstown",
+                  "Southampton"
+                ],
+                "y": [
+                  87,
+                  34,
+                  324
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "Cherbourg",
+                  "Queenstown",
+                  "Southampton"
+                ],
+                "y": [
+                  81,
+                  43,
+                  320
+                ]
+              }
+            }
+          },
+          "embarked": {
+            "column_name": "embarked",
+            "column_type": "cat",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.30565844418727445,
+            "drift_detected": false,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "C",
+                  "Q",
+                  "S"
+                ],
+                "y": [
+                  87,
+                  34,
+                  324
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "C",
+                  "Q",
+                  "S"
+                ],
+                "y": [
+                  81,
+                  43,
+                  320
+                ]
+              }
+            }
+          },
+          "sex": {
+            "column_name": "sex",
+            "column_type": "cat",
+            "stattest_name": "Z-test p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.046781299403213294,
+            "drift_detected": true,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "female",
+                  "male"
+                ],
+                "y": [
+                  143,
+                  303
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "female",
+                  "male"
+                ],
+                "y": [
+                  171,
+                  274
+                ]
+              }
+            }
+          },
+          "who": {
+            "column_name": "who",
+            "column_type": "cat",
+            "stattest_name": "chi-square p_value",
+            "stattest_threshold": 0.05,
+            "drift_score": 0.009070245074315305,
+            "drift_detected": true,
+            "current": {
+              "small_distribution": {
+                "x": [
+                  "child",
+                  "man",
+                  "woman"
+                ],
+                "y": [
+                  41,
+                  284,
+                  121
+                ]
+              }
+            },
+            "reference": {
+              "small_distribution": {
+                "x": [
+                  "child",
+                  "man",
+                  "woman"
+                ],
+                "y": [
+                  42,
+                  253,
+                  150
+                ]
+              }
+            }
+          }
+        },
+        "current_fi": null,
+        "reference_fi": null
+      }
+    }
+  ]
+}

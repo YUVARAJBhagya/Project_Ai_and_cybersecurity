@@ -1,0 +1,121 @@
+<html><head><meta charset='utf-8'><title>Titanic Drift Report</title></head><body>
+<h1>Titanic Drift Report</h1>
+<p>Reference: data/titanic_period1.csv (400 rows) — Current: data/titanic_period2.csv (491 rows)</p>
+<h2>KL Divergence Summary</h2>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>column</th>
+      <th>type</th>
+      <th>kl_ref_to_cur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>who</td>
+      <td>categorical</td>
+      <td>4.268290</td>
+    </tr>
+    <tr>
+      <td>sibsp</td>
+      <td>numeric</td>
+      <td>1.458847</td>
+    </tr>
+    <tr>
+      <td>deck</td>
+      <td>categorical</td>
+      <td>1.225625</td>
+    </tr>
+    <tr>
+      <td>age</td>
+      <td>numeric</td>
+      <td>0.246969</td>
+    </tr>
+    <tr>
+      <td>parch</td>
+      <td>numeric</td>
+      <td>0.082027</td>
+    </tr>
+    <tr>
+      <td>pclass</td>
+      <td>numeric</td>
+      <td>0.074281</td>
+    </tr>
+    <tr>
+      <td>class</td>
+      <td>categorical</td>
+      <td>0.074281</td>
+    </tr>
+    <tr>
+      <td>fare</td>
+      <td>numeric</td>
+      <td>0.064574</td>
+    </tr>
+    <tr>
+      <td>adult_male</td>
+      <td>numeric</td>
+      <td>0.054197</td>
+    </tr>
+    <tr>
+      <td>embarked</td>
+      <td>categorical</td>
+      <td>0.052146</td>
+    </tr>
+    <tr>
+      <td>embark_town</td>
+      <td>categorical</td>
+      <td>0.052146</td>
+    </tr>
+    <tr>
+      <td>alone</td>
+      <td>numeric</td>
+      <td>0.027455</td>
+    </tr>
+    <tr>
+      <td>sex</td>
+      <td>categorical</td>
+      <td>0.007741</td>
+    </tr>
+    <tr>
+      <td>survived</td>
+      <td>numeric</td>
+      <td>0.003133</td>
+    </tr>
+    <tr>
+      <td>alive</td>
+      <td>categorical</td>
+      <td>0.003133</td>
+    </tr>
+  </tbody>
+</table><h2>Column Plots</h2>
+<h3>survived</h3>
+<img src='plots/survived.png' style='max-width:900px;'><br>
+<h3>pclass</h3>
+<img src='plots/pclass.png' style='max-width:900px;'><br>
+<h3>sex</h3>
+<img src='plots/sex.png' style='max-width:900px;'><br>
+<h3>age</h3>
+<img src='plots/age.png' style='max-width:900px;'><br>
+<h3>sibsp</h3>
+<img src='plots/sibsp.png' style='max-width:900px;'><br>
+<h3>parch</h3>
+<img src='plots/parch.png' style='max-width:900px;'><br>
+<h3>fare</h3>
+<img src='plots/fare.png' style='max-width:900px;'><br>
+<h3>embarked</h3>
+<img src='plots/embarked.png' style='max-width:900px;'><br>
+<h3>class</h3>
+<img src='plots/class.png' style='max-width:900px;'><br>
+<h3>who</h3>
+<img src='plots/who.png' style='max-width:900px;'><br>
+<h3>adult_male</h3>
+<img src='plots/adult_male.png' style='max-width:900px;'><br>
+<h3>deck</h3>
+<img src='plots/deck.png' style='max-width:900px;'><br>
+<h3>embark_town</h3>
+<img src='plots/embark_town.png' style='max-width:900px;'><br>
+<h3>alive</h3>
+<img src='plots/alive.png' style='max-width:900px;'><br>
+<h3>alone</h3>
+<img src='plots/alone.png' style='max-width:900px;'><br>
+</body></html>
